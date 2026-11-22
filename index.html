@@ -77,7 +77,10 @@
 
   *, *::before, *::after { box-sizing: border-box; }
   /* the large viewport height, so the sky does not jump when a phone's address bar slides */
-  #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; z-index: -1; pointer-events: none; }
+  #bg, #sky { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
+  #bg { z-index: -1; }
+  #sky { z-index: -2; opacity: 0; transition: opacity 2.8s ease-out; will-change: transform; }
+  #sky.on { opacity: 1; }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--page); }
   body { margin: 0; color: var(--ink); background: transparent;
     font: 400 17px/1.65 var(--serif); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -336,7 +339,7 @@
 
   /* print: a clean, light, one-column CV */
   @media print {
-    #bg, .nav, .skip, .ctas, .moon-scene, .menu-btn, .visits { display: none !important; }
+    #bg, #sky, .nav, .skip, .ctas, .moon-scene, .menu-btn, .visits { display: none !important; }
     :root {
       --page: #fff; --paper: #fff; --paper-sunk: #f2f3f5; --ink: #000; --ink-2: #222; --muted: #444; --accent: #6b4b00;
       --line: #ccc; --line-2: #999; --chart-actual: #000; --chart-rte: #777; color-scheme: light; }
@@ -359,6 +362,7 @@
 </head>
 <body>
 <a class="skip" href="#top">Skip to content</a>
+<canvas id="sky" aria-hidden="true"></canvas>
 <canvas id="bg" aria-hidden="true"></canvas>
 
 <nav class="nav" aria-label="Main">
@@ -817,166 +821,412 @@
 </script>
 
 <script>
-/* A quiet night sky behind the page. Nothing here asks for attention: a
-   field of stars that twinkles and drifts with scroll depth, and a few small,
-   faint phenomena kept towards the edges - distant spiral galaxies turning
-   slowly, a binary pair in orbit, a pulsar sweeping its beams, the odd
-   satellite and shooting star. It holds still for reduced motion. */
+/* The night sky behind the page, drawn after the real one. A still layer is
+   painted once: the Milky Way with its star clouds and dark dust lanes,
+   thousands of faint stars in true star colours, a few far galaxies (kept out
+   of the Milky Way, whose dust hides them in the real sky too), a gold-and-blue
+   double star and the remnant of a supernova, small and towards the margins.
+   Only small things move: the brighter stars twinkle, the pulsar inside the
+   remnant beats every 1.337 s like the first one ever found, and now and then
+   a meteor falls away from its shower's radiant or a satellite crosses and
+   fades into the Earth's shadow. The faint sky comes up slowly, as it does
+   while the eyes get used to the dark; the whole sky pans a little with
+   scrolling; and all of it holds still for reduced motion. */
 (function () {
-  var c = document.getElementById("bg");
-  if (!c || !c.getContext) return;
-  var ctx = c.getContext("2d");
+  var c = document.getElementById("bg"), sky = document.getElementById("sky");
+  if (!c || !c.getContext || !sky || !sky.getContext) return;
+  var ctx = c.getContext("2d"), sctx = sky.getContext("2d");
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var W = 0, H = 0, small = false;
-  var stars = [], galaxies = [], binary = null, pulsar = null, meteors = [], sats = [];
-  var nextMeteor = 3000, nextSat = 9000;
+  var PAN = .04, GLOW = .13;             // how far the sky follows the scroll; how bright the Milky Way is
+  var W = 0, H = 0, SH = 0, extra = 0, dpr = 0, sdpr = 1, gen = 0, lastOff = -1;
+  var geo = null, bright = [], faint = [], galaxies = [], placed = [], remnant = null, pulsar = null;
+  var meteors = [], sats = [], nextMeteor = 6000 + Math.random() * 6000, nextSat = 15000 + Math.random() * 15000;
 
-  var WHITE = [255, 250, 240], OCHER = [226, 181, 64], SALVIA = [151, 172, 200], CORAL = [245, 142, 132];
-  var rgba = function (rgb, a) { return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")"; };
-  var seed = 11, rnd = function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  /* star colours by temperature, hottest first: the colour of a body glowing that hot (after M. Charity) */
+  var TEMP = [[155, 176, 255], [170, 191, 255], [202, 215, 255], [248, 247, 255], [255, 244, 234], [255, 222, 186], [255, 198, 140]];
+  var WHITE = [255, 255, 255];
+  var mix = function (a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]; };
+  var css = function (rgb, a) { return "rgba(" + Math.round(rgb[0]) + "," + Math.round(rgb[1]) + "," + Math.round(rgb[2]) + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")"; };
+  var smooth = function (a, b, x) { x = Math.max(0, Math.min(1, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
 
-  /* the small phenomena live in the free margins beside the content, never behind it */
-  var placeX = function (size) {
-    var box = document.querySelector("main > .wrap"), left = 0;
-    if (box) { var r = box.getBoundingClientRect(); left = r.left + parseFloat(getComputedStyle(box).paddingLeft); }
+  /* a seeded random source, so every visitor gets the same sky */
+  var seed = 1, rnd = function () {
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+  var pickTemp = function () { var r = rnd(); return TEMP[r < .06 ? 0 : r < .17 ? 1 : r < .34 ? 2 : r < .56 ? 3 : r < .78 ? 4 : r < .93 ? 5 : 6]; };
+  /* star magnitudes as in the real sky: one magnitude fainter, about 2.2 times as many stars */
+  var magnitude = function (lo, hi) { var a = Math.exp(.8 * lo), b = Math.exp(.8 * hi); return Math.log(a + rnd() * (b - a)) / .8; };
+  var alphaOf = function (m) { return Math.min(1, .1 * Math.pow(10, -.168 * (m - 7.4))); };
+
+  /* smooth value noise in octaves, each one turned so that no grid shows */
+  var perm = new Uint8Array(512), vals = new Float32Array(256), i0, j0, k0;
+  for (i0 = 0; i0 < 256; i0++) { perm[i0] = i0; vals[i0] = rnd(); }
+  for (i0 = 255; i0 > 0; i0--) { j0 = Math.floor(rnd() * (i0 + 1)); k0 = perm[i0]; perm[i0] = perm[j0]; perm[j0] = k0; }
+  for (i0 = 0; i0 < 256; i0++) perm[i0 + 256] = perm[i0];
+  var noise = function (x, y) {
+    var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, X = xi & 255, Y = yi & 255;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = vals[perm[perm[X] + Y]], b = vals[perm[perm[X + 1] + Y]], d = vals[perm[perm[X] + Y + 1]], e = vals[perm[perm[X + 1] + Y + 1]];
+    return a + (b - a) * u + (d - a) * v + (a - b - d + e) * u * v;
+  };
+  var fbm = function (x, y, oct) {
+    var s = 0, amp = .5, norm = 0, nx;
+    for (var o = 0; o < oct; o++) { s += amp * noise(x, y); norm += amp; nx = 1.6 * x - 1.2 * y + 7.3; y = 1.2 * x + 1.6 * y + 3.1; x = nx; amp *= .5; }
+    return s / norm;
+  };
+
+  /* the Milky Way runs corner to corner, its bright centre low on the left */
+  var setBand = function () {
+    var diag = Math.hypot(W, H), ang = Math.atan2(-.82 * H, 1.1 * W);
+    geo = { ca: Math.cos(ang), sa: Math.sin(ang), cx: W * .52, cy: SH * .5, w: diag * .085, u0: -diag * .42, L: diag * .3 };
+  };
+  var band = function (x, y) {           // 1 on the band's centre line, falling to 0 away from it
+    var px = x - geo.cx, py = y - geo.cy, u = px * geo.ca + py * geo.sa, v = -px * geo.sa + py * geo.ca;
+    var w = geo.w * (1 + .8 * Math.exp(-Math.pow((u - geo.u0) / geo.L, 2)));
+    return Math.exp(-(v * v) / (w * w));
+  };
+
+  /* how a star's light spreads, on the eye as on a lens: a sharp core that
+     burns white when it is bright, in a soft halo of the star's own colour.
+     Each bright star gets its own small image, at the screen's own pixels. */
+  var starSprite = function (L, rgb) {
+    var lg = Math.log(L) / Math.LN10, peak = Math.min(1, .135 * Math.pow(L, .42));
+    var sc = .42 + .16 * lg, sh = 1.4 + 1.1 * lg, so = 3.5 + 3 * lg;              // widths, in CSS pixels
+    var ah = .13 * Math.min(1, lg / 1.4), ao = .03 * Math.min(1, lg / 2.4);
+    var R = Math.ceil((ao > .006 ? so * 2.4 : sh * 2.6) * dpr) + 1, S = R * 2;
+    var cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    for (var y = 0; y < S; y++) for (var x = 0; x < S; x++) {
+      var r2 = (Math.pow(x + .5 - R, 2) + Math.pow(y + .5 - R, 2)) / (dpr * dpr);
+      var core = Math.exp(-r2 / (2 * sc * sc)), I = peak * (core + ah * Math.exp(-r2 / (2 * sh * sh)) + ao * Math.exp(-r2 / (2 * so * so)));
+      var wt = Math.min(1, core * peak * .9), k = (y * S + x) * 4;
+      d[k] = rgb[0] + (255 - rgb[0]) * wt; d[k + 1] = rgb[1] + (255 - rgb[1]) * wt; d[k + 2] = rgb[2] + (255 - rgb[2]) * wt;
+      d[k + 3] = Math.min(255, I * 255);
+    }
+    g.putImageData(img, 0, 0);
+    return { cv: cv, R: R / dpr };
+  };
+  var star = function (x, y, m, rgb) {
+    var L = Math.pow(10, -.4 * (m - 7.4));
+    return { x: x, y: y, spr: starSprite(L, rgb), tw: 0, amp: .1 + .17 * Math.min(1, Math.log(L) / Math.LN10 / 3) };
+  };
+
+  /* small things live in the free margins beside the content, never behind it,
+     and keep clear of each other; want(x, y) says whether a place suits one */
+  var spot = function (r, want) {
+    var box = document.querySelector("main > .wrap"), left = 0, x = 0, y = 0, found = null, fallback = null;
+    if (box) { var b = box.getBoundingClientRect(); left = b.left + parseFloat(getComputedStyle(box).paddingLeft); }
     var room = left - 16;
-    if (room < size * 2 + 8) return (.06 + rnd() * .88) * W;
-    var off = 8 + size + rnd() * (room - size * 2 - 8);
-    return rnd() < .5 ? off : W - off;
-  };
-  var build = function () {
-    seed = 11; stars = []; galaxies = [];
-    var n = Math.round(W * H / (small ? 5200 : 4300));
-    for (var i = 0; i < n; i++) {
-      var z = Math.pow(rnd(), 1.8) * .9 + .1, tint = rnd();
-      stars.push({ x: rnd(), y: rnd(), z: z, r: .35 + z * 1.05, ph: rnd() * 6.283, tw: .4 + rnd() * 1.4,
-        c: tint < .08 ? OCHER : tint < .22 ? SALVIA : null });
+    for (var k = 0; k < 80 && !found; k++) {
+      y = 90 + r + rnd() * (SH - 110 - r * 2);        // clear of the bar at the top when the page opens
+      if (room >= r * 2 + 8) { var o = 8 + r + rnd() * (room - r * 2 - 8); x = rnd() < .5 ? o : W - o; }
+      else x = (.06 + rnd() * .88) * W;
+      var clear = placed.every(function (q) { return Math.hypot(q[0] - x, q[1] - y) > q[2] + r + 110; });
+      if (clear && (!want || want(x, y))) found = [x, y];
+      else if (clear && !fallback) fallback = [x, y];
     }
-    for (var g = 0; g < (small ? 2 : 4); g++) {
-      var pts = [], arms = 2, size = (small ? 11 : 15) + rnd() * 12;
-      for (var k = 0; k < 140; k++) {
-        var arm = k % arms, d = Math.pow(rnd(), .7), a = arm * Math.PI + d * 4.2 + (rnd() - .5) * .5;
-        pts.push([Math.cos(a) * d, Math.sin(a) * d, .5 + rnd() * .8]);
-      }
-      galaxies.push({ x: placeX(size), y: .08 + rnd() * .84, size: size, tilt: .35 + rnd() * .45, rot: rnd() * 6.28,
-        spin: (rnd() < .5 ? 1 : -1) * (.05 + rnd() * .04), pts: pts, depth: .15 + rnd() * .2, hue: rnd() < .5 ? SALVIA : CORAL });
-    }
-    binary = { x: placeX(12), y: .15 + rnd() * .7, r: small ? 6 : 8, period: 7000, depth: .3 };
-    pulsar = { x: placeX(28), y: .15 + rnd() * .7, period: 1600, depth: .25 };
+    found = found || fallback || [x, y];
+    placed.push([found[0], found[1], r]);
+    return found;
   };
 
-  var wrapY = function (y0, depth, sy) { var span = H + 120; return ((y0 * span - sy * depth * .3) % span + span) % span - 60; };
+  /* where everything goes; the bright stars are drawn at once, the rest is painted just after */
+  var place = function () {
+    seed = 7; bright = []; faint = []; galaxies = []; placed = [];
+    var n = Math.round(W * SH / 440), i, p;
+    for (i = 0; i < n; i++) {
+      var x = rnd() * W, y = rnd() * SH, m = magnitude(-.2, 7.4), col = pickTemp();
+      if (rnd() > .4 + .6 * Math.min(1, band(x, y) * 1.6)) continue;     // stars crowd towards the Milky Way
+      if (m < 3.7) bright.push(star(x, y, m, col)); else faint.push([x, y, m, col]);
+    }
+    var big = W >= 900;
+    // a double star, gold and blue, like Albireo in the Swan
+    p = spot(8);
+    bright.push(star(p[0], p[1], 2.4, [255, 200, 122]), star(p[0] + 5.5, p[1] - 4, 4, [146, 178, 255]));
+    // supernova remnants lie in the plane of the galaxy, so this one sits in the Milky Way
+    p = spot(big ? 22 : 16, function (x, y) { return band(x, y) > .45; });
+    remnant = [p[0], p[1], big ? 40 : 30];
+    pulsar = star(p[0], p[1], 3.9, [222, 230, 255]); bright.push(pulsar);
+    // galaxies: the dust of the Milky Way hides them, so they keep away from it
+    var away = function (x, y) { return band(x, y) < .12; };
+    (big ? [1, 2, 0] : [1, 2]).forEach(function (k) {
+      var size = (k === 0 ? 14 : k === 1 ? 38 : 44) * (big ? 1 : .75), q = spot(size / 2, away);
+      galaxies.push([q[0], q[1], size, k, 100 + galaxies.length]);
+    });
+    // and smaller, farther ones scattered about, as on a deep photograph
+    var far = Math.round(W * SH / 110000), apart = function (x, y) {
+      return placed.every(function (q) { return Math.hypot(q[0] - x, q[1] - y) > q[2] + 40; });
+    };
+    for (i = 0; i < far; i++) {
+      var tries = 0, gx, gy;
+      do { gx = rnd() * W; gy = 80 + rnd() * (SH - 90); } while ((band(gx, gy) > .12 || !apart(gx, gy)) && ++tries < 30);
+      galaxies.push([gx, gy, 4 + rnd() * 6, rnd() < .45 ? 0 : rnd() < .6 ? 1 : 2, 200 + i]);
+      placed.push([gx, gy, 5]);
+    }
+  };
+
+  /* the Milky Way: a soft glow worked out on a coarse grid (a quarter of the
+     screen's size, coarser on very wide screens) and smoothed up, mottled into
+     star clouds and cut by lanes of dust, warmer towards the centre of the
+     galaxy, with a few faint red clouds of glowing hydrogen along it */
+  var milkyWay = function () {
+    var q = Math.max(4, Math.min(6, Math.round(W / 360))), gw = Math.ceil(W / q), gh = Math.ceil(SH / q);
+    var cv = document.createElement("canvas"); cv.width = gw; cv.height = gh;
+    var g = cv.getContext("2d"), img = g.createImageData(gw, gh), d = img.data, field = new Float32Array(gw * gh), fmax = 0;
+    var ca = geo.ca, sa = geo.sa, bw = geo.w, u0 = geo.u0, L = geo.L, nebs = [], k;
+    seed = 23;
+    for (k = 0; k < 3; k++) {
+      var nu = u0 + (rnd() * 1.6 - .2) * L, nv = (rnd() - .5) * bw * .8;
+      nebs.push([geo.cx + nu * ca - nv * sa, geo.cy + nu * sa + nv * ca, 40 + rnd() * 60]);
+    }
+    for (var y = 0, p = 0; y < gh; y++) for (var x = 0; x < gw; x++, p++) {
+      var X = (x + .5) * q, Y = (y + .5) * q, px = X - geo.cx, py = Y - geo.cy;
+      var u = px * ca + py * sa, v = -px * sa + py * ca;
+      v += (fbm(u / 520 + 3.7, 1.9, 3) - .5) * bw * 1.1;                      // the band meanders
+      var cu = (u - u0) / L, core = Math.exp(-cu * cu), t = v / (bw * (1 + .8 * core)), t2 = t * t;
+      var prof = (Math.exp(-t2) + .22 * Math.exp(-t2 / 5)) * (.42 + .58 * core);
+      if (prof < .004) continue;
+      var clouds = smooth(.28, .82, fbm(u / 210 + 11, v / 105 + 5, 5));
+      var lane = Math.exp(-Math.pow((t - .12) / .5, 2));                        // the dark rift, just off the centre line
+      var dust = smooth(.45, .66, fbm(u / 330 + 40, v / 62 + 9, 5)) * lane * .9 + smooth(.56, .74, fbm(X / 95 + 5, Y / 95 + 3, 4)) * .4;
+      if (dust > .94) dust = .94;
+      var G = prof * (.32 + .68 * clouds * clouds) * (1 - dust);
+      field[p] = G; if (G > fmax) fmax = G;
+      var warm = Math.min(1, core * .85 + dust * .4), a = G * GLOW;
+      var r = 200 + 55 * warm, gg = 212 + 6 * warm, b = 255 - 85 * warm;
+      for (k = 0; k < 3; k++) {
+        var ex = X - nebs[k][0], ey = Y - nebs[k][1], e = (ex * ex + ey * ey) / (nebs[k][2] * nebs[k][2]);
+        if (e > 4) continue;
+        var h = Math.exp(-e) * smooth(.4, .8, fbm(X / 46 + k * 17, Y / 46, 4)) * (1 - dust) * .05;
+        if (h <= 0) continue;
+        r = (r * a + 255 * h) / (a + h); gg = (gg * a + 118 * h) / (a + h); b = (b * a + 140 * h) / (a + h); a += h;
+      }
+      var i4 = p * 4; d[i4] = r; d[i4 + 1] = gg; d[i4 + 2] = b; d[i4 + 3] = Math.min(255, a * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = "high";
+    sctx.drawImage(cv, 0, 0, gw * q, gh * q);
+    return { field: field, fmax: fmax, gw: gw, gh: gh, q: q };
+  };
+
+  /* most of the band's light is stars too faint to see one by one: sprinkle
+     the faintest in proportion to its glow, so the dust hides them as well */
+  var starClouds = function (mw) {
+    seed = 31;
+    var n = Math.round(W * SH / 24), side = Math.max(1 / sdpr, .75);
+    for (var i = 0; i < n; i++) {
+      var x = rnd() * W, y = rnd() * SH;
+      var f = mw.field[Math.min(mw.gh - 1, y / mw.q | 0) * mw.gw + Math.min(mw.gw - 1, x / mw.q | 0)];
+      if (f <= 0 || rnd() * mw.fmax > f) continue;
+      sctx.fillStyle = css(mix(pickTemp(), WHITE, .5), alphaOf(magnitude(5.4, 8.6)));
+      sctx.fillRect(x, y, side, side);
+    }
+  };
+
+  var faintStars = function () {
+    for (var i = 0; i < faint.length; i++) {
+      var s = faint[i], a = alphaOf(s[2]), col = mix(s[3], WHITE, .3);
+      if (s[2] < 5.4) {                                                       // the brighter ones show a little halo
+        var hg = sctx.createRadialGradient(s[0], s[1], 0, s[0], s[1], 3.2);
+        hg.addColorStop(0, css(s[3], a * .2)); hg.addColorStop(1, css(s[3], 0));
+        sctx.fillStyle = hg; sctx.fillRect(s[0] - 3.2, s[1] - 3.2, 6.4, 6.4);
+      }
+      sctx.fillStyle = css(col, a);
+      sctx.beginPath(); sctx.arc(s[0], s[1], .5 + .18 * (7.4 - s[2]) / 3.7, 0, 6.2832); sctx.fill();
+    }
+  };
+
+  /* a galaxy, worked out pixel by pixel: a smooth elliptical (0); a spiral
+     seen at a tilt, a warm bulge in a bluer disc with dusty arms and pink
+     knots of new stars (1); or one seen edge-on, cut by its lane of dust (2) */
+  var paintGalaxy = function (gx, gy, size, kind, gseed) {
+    seed = gseed;
+    var R = Math.ceil(size / 2 * sdpr) + 1, S = R * 2, cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    var rot = rnd() * Math.PI, cr = Math.cos(rot), sr = Math.sin(rot);
+    var tilt = kind === 2 ? 1 : kind === 1 ? .42 + rnd() * .5 : .6 + rnd() * .35;
+    var wind = rnd() < .5 ? 1 : -1, pitch = 1.4 + rnd() * .6, ph = rnd() * 6.2832, ox = rnd() * 50, oy = rnd() * 50;
+    var lum = (size > 12 ? .42 : .32) + rnd() * .2;
+    for (var j = 0; j < S; j++) for (var i = 0; i < S; i++) {
+      var dx = (i + .5 - R) / R, dy = (j + .5 - R) / R, a = dx * cr + dy * sr, b = -dx * sr + dy * cr;
+      var warm = 0, cool = 0, pink = 0;
+      if (kind === 0) {
+        var e = Math.hypot(a, b / tilt);
+        warm = .55 * Math.exp(-e * e / .004) + .45 * Math.exp(-e / .16);
+      } else if (kind === 1) {
+        var bb = b / tilt, r = Math.hypot(a, bb), th = Math.atan2(bb, a), lr = Math.log(r + .05) * pitch;
+        var arm = .5 + .5 * Math.cos(2 * (th * wind - lr + ph)), lane = .5 + .5 * Math.cos(2 * (th * wind - lr + ph + .5));
+        var disc = Math.exp(-r / .22), open = smooth(.08, .3, r);           // the arms wind out of the bulge
+        warm = .6 * Math.exp(-r * r / .004) + .3 * Math.exp(-r / .07);
+        cool = disc * (.45 + .9 * arm * arm * open * (.65 + .7 * noise(a * 9 + ox, bb * 9 + oy))) * (1 - .5 * Math.pow(lane, 6) * open);
+        pink = disc * Math.pow(arm, 4) * smooth(.66, .86, noise(a * 16 + oy, bb * 16 + ox)) * smooth(.15, .35, r) * .7;
+      } else {
+        var z = b;
+        var lanes = 1 - .8 * Math.exp(-Math.pow((z - .012) / .018, 2)) * Math.exp(-Math.abs(a) / .55);
+        warm = .5 * Math.exp(-(a * a + z * z / .42) / .012) * lanes;
+        cool = .9 * Math.exp(-Math.abs(a) / .3) * Math.exp(-Math.abs(z) / .045) * lanes;
+      }
+      var edge = 1 - smooth(.75, 1, Math.hypot(dx, dy)), tot = warm + cool + pink, A = tot * lum * edge;
+      if (A < .002) continue;
+      var k = (j * S + i) * 4;
+      d[k] = (255 * warm + 175 * cool + 255 * pink) / tot;
+      d[k + 1] = (226 * warm + 196 * cool + 140 * pink) / tot;
+      d[k + 2] = (186 * warm + 255 * cool + 175 * pink) / tot;
+      d[k + 3] = Math.min(255, A * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.globalCompositeOperation = "lighter";
+    sctx.drawImage(cv, gx - R / sdpr, gy - R / sdpr, S / sdpr, S / sdpr);
+    sctx.globalCompositeOperation = "source-over";
+  };
+
+  /* the remnant of a supernova: red filaments of gas thrown off by the blast,
+     round a blue haze lit by the pulsar left at its heart */
+  var paintRemnant = function (x, y, size) {
+    seed = 57;
+    var R = Math.ceil(size / 2 * sdpr) + 1, S = R * 2, cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    var rot = rnd() * Math.PI, cr = Math.cos(rot), sr = Math.sin(rot), ox = rnd() * 40, oy = rnd() * 40;
+    for (var j = 0; j < S; j++) for (var i = 0; i < S; i++) {
+      var dx = (i + .5 - R) / R, dy = (j + .5 - R) / R, a = dx * cr + dy * sr, b = (-dx * sr + dy * cr) / .74;
+      var e = Math.hypot(a, b) / .92;
+      if (e >= 1) continue;
+      var body = smooth(1, .35, e), n1 = fbm(a * 5 + ox, b * 5 + oy, 4);
+      var red = body * (.3 + .8 * Math.pow(1 - Math.abs(2 * n1 - 1), 3.5));
+      var blue = Math.exp(-e * e / .18) * .65, tot = red + blue, A = tot * .3;
+      if (A < .002) continue;
+      var k = (j * S + i) * 4;
+      d[k] = (255 * red + 190 * blue) / tot; d[k + 1] = (138 * red + 205 * blue) / tot; d[k + 2] = (105 * red + 255 * blue) / tot;
+      d[k + 3] = Math.min(255, A * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.globalCompositeOperation = "lighter";
+    sctx.drawImage(cv, x - R / sdpr, y - R / sdpr, S / sdpr, S / sdpr);
+    sctx.globalCompositeOperation = "source-over";
+  };
+
+  /* a fine grain, as on a long exposure; it also keeps the dark gradients from banding */
+  var grain = function () {
+    var T = 128, cv = document.createElement("canvas"); cv.width = cv.height = T;
+    var g = cv.getContext("2d"), img = g.createImageData(T, T), d = img.data;
+    seed = 91;
+    for (var i = 0; i < T * T; i++) { d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = 255; d[i * 4 + 3] = rnd() * 3 | 0; }
+    g.putImageData(img, 0, 0);
+    sctx.setTransform(1, 0, 0, 1, 0, 0);
+    sctx.fillStyle = sctx.createPattern(cv, "repeat"); sctx.fillRect(0, 0, sky.width, sky.height);
+    sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+  };
+
+  var paintSky = function () {
+    sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, sky.width, sky.height);
+    sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+    starClouds(milkyWay());
+    faintStars();
+    galaxies.forEach(function (g) { paintGalaxy(g[0], g[1], g[2], g[3], g[4]); });
+    paintRemnant(remnant[0], remnant[1], remnant[2]);
+    grain();
+    sky.classList.add("on");                       // and the faint sky comes up, as the eyes adjust
+  };
 
   var frame = function (t) {
     var dt = Math.min(.05, (t - (frame.last || t)) / 1000); frame.last = t;
-    var sy = window.scrollY, m = 1, base = WHITE;
-    ctx.globalCompositeOperation = "source-over";
+    var off = Math.round(Math.min(extra, Math.max(0, window.scrollY * PAN)) * 2) / 2;
+    if (off !== lastOff) { lastOff = off; sky.style.transform = "translate3d(0," + -off + "px,0)"; }
     ctx.clearRect(0, 0, W, H);
-
-    // barely-there haze
-    [[.1, .2, .5, SALVIA, .06], [.9, .75, .45, CORAL, .035]].forEach(function (n, i) {
-      var nx = n[0] * W, ny = ((n[1] * H - sy * .03 * (i + 1)) % (H * 1.4) + H * 1.4) % (H * 1.4) - H * .2;
-      var gr = ctx.createRadialGradient(nx, ny, 0, nx, ny, n[2] * Math.max(W, H));
-      gr.addColorStop(0, rgba(n[3], n[4])); gr.addColorStop(1, rgba(n[3], 0));
-      ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
-    });
-
-    // stars
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-      var x = ((s.x * W - t * .0025 * s.z) % W + W) % W, y = wrapY(s.y, s.z, sy);
-      var tw = reduce ? 1 : .65 + .35 * Math.sin(t * .001 * s.tw + s.ph);
-      ctx.beginPath(); ctx.arc(x, y, s.r, 0, 6.283);
-      ctx.fillStyle = rgba(s.c || base, (.18 + .55 * s.z) * tw * m); ctx.fill();
-    }
-
     ctx.globalCompositeOperation = "lighter";
 
-    // distant spiral galaxies, turning slowly
-    galaxies.forEach(function (g) {
-      var gx = g.x, gy = wrapY(g.y, g.depth, sy), rot = g.rot + (reduce ? 0 : t / 1000 * g.spin);
-      var cr = Math.cos(rot), sr = Math.sin(rot);
-      var core = ctx.createRadialGradient(gx, gy, 0, gx, gy, g.size * .45);
-      core.addColorStop(0, rgba(WHITE, .28 * m)); core.addColorStop(1, rgba(WHITE, 0));
-      ctx.fillStyle = core; ctx.fillRect(gx - g.size, gy - g.size, g.size * 2, g.size * 2);
-      for (var k = 0; k < g.pts.length; k++) {
-        var p = g.pts[k], px = (p[0] * cr - p[1] * sr) * g.size, py = (p[0] * sr + p[1] * cr) * g.size * g.tilt;
-        ctx.fillStyle = rgba(k % 3 ? g.hue : WHITE, .22 * m * (1 - Math.hypot(p[0], p[1]) * .6));
-        ctx.fillRect(gx + px, gy + py, p[2], p[2]);
+    // the brighter stars, twinkling as the air above us shifts
+    for (var i = 0; i < bright.length; i++) {
+      var s = bright[i], y = s.y - off, R = s.spr.R, k = 1;
+      if (y < -R || y > H + R) continue;
+      if (!reduce) {
+        if (s === pulsar) {                        // a sharp pulse and a weaker one between, like a real pulsar's
+          var ph = (t % 1337) / 1337;
+          k = .45 + 1.3 * (Math.exp(-Math.pow((ph - .1) / .03, 2)) + .4 * Math.exp(-Math.pow((ph - .52) / .04, 2)));
+        } else { s.tw = s.tw * .8 + (Math.random() - .5) * s.amp; k = 1 + s.tw; }
       }
-    });
-
-    // a binary pair in orbit around their common centre
-    if (binary) {
-      var bx = binary.x, by = wrapY(binary.y, binary.depth, sy), ph = (reduce ? 0 : t / binary.period) * 6.283;
-      var ox = Math.cos(ph) * binary.r, oy = Math.sin(ph) * binary.r * .45;
-      ctx.beginPath(); ctx.ellipse(bx, by, binary.r, binary.r * .45, 0, 0, 6.283);
-      ctx.strokeStyle = rgba(base, .07 * m); ctx.lineWidth = .8; ctx.stroke();
-      ctx.beginPath(); ctx.arc(bx + ox, by + oy, 1.6, 0, 6.283); ctx.fillStyle = rgba(OCHER, .75 * m); ctx.fill();
-      ctx.beginPath(); ctx.arc(bx - ox * .7, by - oy * .7, 1.2, 0, 6.283); ctx.fillStyle = rgba(SALVIA, .75 * m); ctx.fill();
+      ctx.globalAlpha = Math.max(0, Math.min(1, k * .74));
+      ctx.drawImage(s.spr.cv, s.x - R, y - R, R * 2, R * 2);
     }
-
-    // a pulsar sweeping two thin beams
-    if (pulsar) {
-      var qx = pulsar.x, qy = wrapY(pulsar.y, pulsar.depth, sy), a = (reduce ? .6 : t / pulsar.period) * 6.283;
-      var flash = Math.pow(Math.abs(Math.cos(a)), 12);
-      [0, Math.PI].forEach(function (off) {
-        var ang = a + off, len = 26;
-        var gr2 = ctx.createLinearGradient(qx, qy, qx + Math.cos(ang) * len, qy + Math.sin(ang) * len * .5);
-        gr2.addColorStop(0, rgba(SALVIA, .45 * m)); gr2.addColorStop(1, rgba(SALVIA, 0));
-        ctx.beginPath(); ctx.moveTo(qx, qy); ctx.lineTo(qx + Math.cos(ang) * len, qy + Math.sin(ang) * len * .5);
-        ctx.strokeStyle = gr2; ctx.lineWidth = 1.2; ctx.stroke();
-      });
-      ctx.beginPath(); ctx.arc(qx, qy, 1.4 + flash * 1.2, 0, 6.283); ctx.fillStyle = rgba(WHITE, (.55 + flash * .4) * m); ctx.fill();
-    }
+    ctx.globalAlpha = 1;
 
     if (!reduce) {
-      // the odd shooting star: short, faint, gone in under a second
+      // now and then a meteor, falling away from the radiant of its shower, above the page
       if (t > nextMeteor) {
-        var down = .35 + Math.random() * .4;                     // falling diagonally, left or right
-        meteors.push({ x: Math.random() * W, y: Math.random() * H * .6, a: Math.random() < .5 ? down : Math.PI - down, born: t, len: 70 + Math.random() * 70 });
-        nextMeteor = t + 4500 + Math.random() * 6000;
+        var mx = W * (.08 + Math.random() * .84), my = H * (.04 + Math.random() * .5), rx = W * .35, ry = -H * .5;
+        var dl = Math.hypot(mx - rx, my - ry), fast = Math.random() < .65;
+        meteors.push({ x: mx, y: my, ux: (mx - rx) / dl, uy: (my - ry) / dl, born: t, dur: fast ? 420 + Math.random() * 260 : 650 + Math.random() * 450,
+          path: 90 + Math.random() * 170, tail: 28 + Math.random() * 46, peak: .4 + Math.random() * .45, rgb: fast ? [214, 255, 236] : [255, 236, 212] });
+        nextMeteor = t + 12000 + Math.random() * 24000;
       }
-      meteors = meteors.filter(function (mt) { return t - mt.born < 800; });
+      meteors = meteors.filter(function (mt) { return t - mt.born < mt.dur; });
       meteors.forEach(function (mt) {
-        var f = (t - mt.born) / 800, hx = mt.x + Math.cos(mt.a) * f * 220, hy = mt.y + Math.sin(mt.a) * f * 220;
-        var tx = hx - Math.cos(mt.a) * mt.len * (1 - f * .4), ty = hy - Math.sin(mt.a) * mt.len * (1 - f * .4);
-        var gr3 = ctx.createLinearGradient(tx, ty, hx, hy);
-        gr3.addColorStop(0, rgba(base, 0)); gr3.addColorStop(1, rgba(WHITE, .55 * m * Math.sin(f * Math.PI)));
-        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.strokeStyle = gr3; ctx.lineWidth = 1.2; ctx.lineCap = "round"; ctx.stroke();
+        var f = (t - mt.born) / mt.dur, b = f < .7 ? Math.pow(f / .7, 1.3) : Math.pow((1 - f) / .3, 1.6), a = mt.peak * b;
+        var hx = mt.x + mt.ux * mt.path * f, hy = mt.y + mt.uy * mt.path * f, tl = mt.tail * Math.min(1, .35 + f * 1.4);
+        var tx = hx - mt.ux * tl, ty = hy - mt.uy * tl, gr = ctx.createLinearGradient(tx, ty, hx, hy);
+        gr.addColorStop(0, css(mt.rgb, 0)); gr.addColorStop(.75, css(mt.rgb, a * .4)); gr.addColorStop(1, css(WHITE, a));
+        ctx.lineCap = "round"; ctx.lineWidth = 1.1; ctx.strokeStyle = gr;
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+        var hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 3);
+        hg.addColorStop(0, css(WHITE, a * .8)); hg.addColorStop(1, css(mt.rgb, 0));
+        ctx.fillStyle = hg; ctx.fillRect(hx - 3, hy - 3, 6, 6);
       });
 
-      // a satellite gliding across, blinking
-      if (t > nextSat) {
-        var l2r = Math.random() < .5;
-        sats.push({ x: l2r ? -10 : W + 10, y: H * (.08 + Math.random() * .5), vx: (l2r ? 1 : -1) * (28 + Math.random() * 18), vy: (Math.random() - .5) * 8, born: t });
-        nextSat = t + 22000 + Math.random() * 16000;
+      // a satellite: a star that moves, steady in the sunlight and slow; some
+      // fade out on entering the Earth's shadow, reddening as they go, and a
+      // tumbling one flashes as its panels catch the sun
+      if (t > nextSat && sats.length < 2) {
+        var l2r = Math.random() < .5, sp = 12 + Math.random() * 10, tilt = (Math.random() - .5) * .6;
+        var lum = Math.pow(10, -.4 * (2.9 + Math.random() * 1.2 - 7.4)), glints = Math.random() < .15;
+        sats.push({ x: l2r ? -10 : W + 10, y: H * (.06 + Math.random() * .6), vx: (l2r ? 1 : -1) * sp * Math.cos(tilt), vy: sp * Math.sin(tilt), went: 0,
+          sun: starSprite(lum, [240, 244, 255]), red: starSprite(lum, [255, 160, 110]), flash: glints ? starSprite(lum * 12, [250, 250, 255]) : null,
+          shadow: Math.random() < .4 ? W * (.25 + Math.random() * .55) : 1e9, phase: Math.random() * 6.28 });
+        nextSat = t + 28000 + Math.random() * 32000;
       }
-      sats = sats.filter(function (st) { return st.x > -20 && st.x < W + 20; });
+      sats = sats.filter(function (st) { return st.x > -12 && st.x < W + 12 && st.y > -12 && st.y < H + 12 && st.went < st.shadow + 70; });
       sats.forEach(function (st) {
-        st.x += st.vx * dt; st.y += st.vy * dt;
-        var blink = ((t - st.born) % 1400) < 120 ? 1 : .45;
-        ctx.beginPath(); ctx.arc(st.x, st.y, 1.1, 0, 6.283); ctx.fillStyle = rgba(WHITE, .7 * blink * m); ctx.fill();
+        st.x += st.vx * dt; st.y += st.vy * dt; st.went += Math.hypot(st.vx, st.vy) * dt;
+        var lit = 1 - smooth(st.shadow, st.shadow + 70, st.went), warm = 1 - smooth(.15, .7, lit);
+        var draw = function (spr, a) { if (a > .004) { ctx.globalAlpha = Math.min(1, a); ctx.drawImage(spr.cv, st.x - spr.R, st.y - spr.R, spr.R * 2, spr.R * 2); } };
+        draw(st.sun, .74 * lit * (1 - warm));
+        draw(st.red, .74 * lit * warm);
+        if (st.flash) draw(st.flash, .9 * lit * Math.pow(Math.max(0, Math.sin(t * .0021 + st.phase)), 40));
       });
+      ctx.globalAlpha = 1;
     }
     ctx.globalCompositeOperation = "source-over";
   };
 
   var size = function () {
     var w = window.innerWidth, h = Math.round(c.getBoundingClientRect().height) || window.innerHeight;
-    if (w === W && h === H) return;                 // a phone's address bar sliding is not a resize of the sky
-    W = w; H = h; small = W < 640;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    if (w === W && h === H && d === dpr) return;    // a phone's address bar sliding is not a resize of the sky
+    W = w; H = h; dpr = d;
+    extra = Math.min(600, Math.max(0, Math.ceil((document.documentElement.scrollHeight - H) * PAN)));
+    SH = H + extra;
+    sdpr = Math.min(dpr, Math.sqrt(12e6 / (W * SH)));   // the still layer stays a sensible size on huge screens
     c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    build();
-    if (reduce) frame(0);
+    sky.width = Math.round(W * sdpr); sky.height = Math.round(SH * sdpr); sky.style.height = SH + "px";
+    lastOff = -1;
+    setBand(); place();
+    frame(performance.now());
+    var mine = ++gen;                               // paint the still layer once the page is up
+    requestAnimationFrame(function () { setTimeout(function () { if (mine === gen) paintSky(); }, 0); });
   };
   size();
-  window.addEventListener("resize", size);
-  if (reduce) window.addEventListener("scroll", function () { frame(0); }, { passive: true });
-  else {                                           // 30 frames a second is plenty for a slow sky
-    var loop = function (t) { if (t - (loop.last || 0) >= 32) { loop.last = t; frame(t); } requestAnimationFrame(loop); };
+  var resizeTimer = 0;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(size, 150); });
+  if (reduce) {
+    var queued = false;
+    window.addEventListener("scroll", function () {
+      if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; frame(0); }); }
+    }, { passive: true });
+  } else {                                          // 30 frames a second is plenty for a slow sky
+    var loop = function (t) { requestAnimationFrame(loop); if (t - (loop.last || 0) >= 32) { loop.last = t; frame(t); } };
     requestAnimationFrame(loop);
   }
 })();

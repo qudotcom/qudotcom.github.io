@@ -316,7 +316,11 @@
   .foot a { display: inline-block; padding: 8px 2px; color: var(--ink-2); text-decoration: none; }
   .foot a:hover { color: var(--accent); }
   .sign { display: inline-flex; align-items: center; gap: 10px; }
-  .sign svg { border-radius: 6px; }
+  .sign > .logo-mark { border-radius: 6px; }
+  .visits { white-space: nowrap; animation: visits-in .8s ease both; }
+  .visits svg { width: 13px; height: 13px; margin: 0 4px 0 2px; vertical-align: -2px; color: var(--accent); }
+  .visits b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  @keyframes visits-in { from { opacity: 0; } }
   .foot i { font: italic 400 .95rem var(--display); }
 
   /* reveal: a sheet settling onto the page */
@@ -332,7 +336,7 @@
 
   /* print: a clean, light, one-column CV */
   @media print {
-    #bg, .nav, .skip, .ctas, .moon-scene, .menu-btn { display: none !important; }
+    #bg, .nav, .skip, .ctas, .moon-scene, .menu-btn, .visits { display: none !important; }
     :root {
       --page: #fff; --paper: #fff; --paper-sunk: #f2f3f5; --ink: #000; --ink-2: #222; --muted: #444; --accent: #6b4b00;
       --line: #ccc; --line-2: #999; --chart-actual: #000; --chart-rte: #777; color-scheme: light; }
@@ -350,6 +354,8 @@
     .socials a::after, .research a::after { content: " (" attr(href) ")"; font: 400 9pt var(--sans); color: #444; }
   }
 </style>
+<!-- visits are counted by GoatCounter: no cookies, nothing personal; localhost is never counted -->
+<script data-goatcounter="https://qudotcom.goatcounter.com/count" async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous" integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 </head>
 <body>
 <a class="skip" href="#top">Skip to content</a>
@@ -694,7 +700,7 @@
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot">
-      <span class="sign"><svg class="logo-mark" width="22" height="22" viewBox="0 0 64 64" aria-hidden="true"><rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="#1A2029" stroke="#fff" stroke-opacity=".08"/><g class="mark-moon"><circle cx="46" cy="16" r="7.5" fill="#E2B540"/><circle cx="49.6" cy="13" r="6.3" fill="#1A2029"/></g><path d="M36.5 48.5 L45 36 L54 48.5" fill="none" stroke="#97ACC8" stroke-opacity=".5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 48.5 L26.5 20.5 L43 48.5 M16 38.3 L37 38.3" fill="none" stroke="#F2E7D2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>© 2026 Abdelouahed Tahri · <i>Paris</i><span id="paris-time"></span></span></span>
+      <span class="sign"><svg class="logo-mark" width="22" height="22" viewBox="0 0 64 64" aria-hidden="true"><rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="#1A2029" stroke="#fff" stroke-opacity=".08"/><g class="mark-moon"><circle cx="46" cy="16" r="7.5" fill="#E2B540"/><circle cx="49.6" cy="13" r="6.3" fill="#1A2029"/></g><path d="M36.5 48.5 L45 36 L54 48.5" fill="none" stroke="#97ACC8" stroke-opacity=".5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 48.5 L26.5 20.5 L43 48.5 M16 38.3 L37 38.3" fill="none" stroke="#F2E7D2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>© 2026 Abdelouahed Tahri · <i>Paris</i><span id="paris-time"></span><span class="visits" id="visits" hidden title="Visits, counted anonymously with GoatCounter: no cookies, nothing personal"> · <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="visits-n"></b> <span id="visits-word">visits</span></span></span></span>
       <span><a href="https://github.com/qudotcom" rel="me">GitHub</a> · <a href="https://www.linkedin.com/in/abdelouahed-tahri-ai" rel="me">LinkedIn</a> · <a href="https://ssrn.com/abstract=7677118">SSRN</a></span>
     </div>
   </div>
@@ -703,6 +709,22 @@
 <script>
 (function () {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* how many visits: GoatCounter's public total for the site. If it can't be had
+     (an ad blocker, the service down), the counter simply stays hidden. */
+  var gc = document.querySelector("script[data-goatcounter]"), visits = document.getElementById("visits");
+  if (gc && visits && window.fetch) {
+    fetch(gc.getAttribute("data-goatcounter").replace(/\/count$/, "") + "/counter/TOTAL.json")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var n = d ? parseInt(String(d.count).replace(/[^0-9]/g, ""), 10) : 0;
+        if (!n) return;
+        document.getElementById("visits-n").textContent = n.toLocaleString("en-US");
+        document.getElementById("visits-word").textContent = n === 1 ? "visit" : "visits";
+        visits.hidden = false;
+      })
+      .catch(function () {});
+  }
 
   /* what time it is where I am */
   var pt = document.getElementById("paris-time");

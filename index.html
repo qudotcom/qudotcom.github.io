@@ -600,6 +600,9 @@
               <radialGradient id="moon-glow"><stop offset="0" stop-color="var(--moon)" stop-opacity=".5"/><stop offset="1" stop-color="var(--moon)" stop-opacity="0"/></radialGradient>
               <radialGradient id="lamp-glow"><stop offset="0" stop-color="#E2B540" stop-opacity=".55"/><stop offset="1" stop-color="#E2B540" stop-opacity="0"/></radialGradient>
               <linearGradient id="hill-line" x1="0" x2="1"><stop offset="0" stop-color="var(--chair)" stop-opacity="0"/><stop offset=".15" stop-color="var(--chair)" stop-opacity=".7"/><stop offset=".85" stop-color="var(--chair)" stop-opacity=".7"/><stop offset="1" stop-color="var(--chair)" stop-opacity="0"/></linearGradient>
+              <linearGradient id="mug-white" x1="0" x2="1"><stop offset="0" stop-color="#D6CFC2"/><stop offset=".22" stop-color="#F5F1E9"/><stop offset=".6" stop-color="#FDFBF7"/><stop offset="1" stop-color="#D0C9BC"/></linearGradient>
+              <linearGradient id="mug-curve" x1="0" x2="1"><stop offset="0" stop-color="#20180F" stop-opacity=".3"/><stop offset=".25" stop-color="#20180F" stop-opacity="0"/><stop offset=".75" stop-color="#20180F" stop-opacity="0"/><stop offset="1" stop-color="#20180F" stop-opacity=".34"/></linearGradient>
+              <clipPath id="mug-clip"><path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z"/></clipPath>
               <radialGradient id="moon-face" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="var(--moon-lit)"/><stop offset="1" stop-color="var(--moon)"/></radialGradient>
             </defs>
 
@@ -678,11 +681,57 @@
               <g id="m-fore" transform="rotate(0 149 190)">
                 <path d="M149 190 L177.2 164.6" stroke="var(--figure)" stroke-width="9.5" stroke-linecap="round" fill="none"/>
                 <g id="m-mug" transform="rotate(0 177.2 164.6)">
-                  <rect x="175.2" y="151.6" width="13" height="15" rx="2.5" fill="#E2B540"/>
-                  <ellipse cx="181.7" cy="152.5" rx="5.4" ry="1" fill="#8C6409" opacity=".55"/>
-                  <path d="M188.2 154.6 q6.5 0 6.5 4.5 q0 4.5 -6.5 4.5" stroke="#E2B540" stroke-width="2.2" fill="none"/>
-                  <circle cx="177.2" cy="161.6" r="5.6" fill="var(--figure)"/>
-                  <path d="M176.2 158.6 L179.2 154.1" stroke="var(--figure)" stroke-width="3.4" stroke-linecap="round"/>
+                  <!-- his own mug: white outside, black inside and a black handle, printed with
+                       torn kraft papers, dried flowers, a photo in a doorway and a little note -->
+                  <ellipse cx="175.4" cy="161.6" rx="3.3" ry="4.4" fill="var(--figure)"/>
+                  <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" stroke="#16181C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" transform="translate(187.6 159.5) scale(1.13) translate(-187.6 -159.5)" pathLength="1" stroke-dasharray=".6 1" stroke="#8A929D" stroke-width=".44" fill="none" stroke-linecap="round"/>
+                  <path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z" fill="url(#mug-white)"/>
+                  <g clip-path="url(#mug-clip)">
+                    <rect x="175" y="153.3" width="11.6" height="12" fill="#E8DABF"/>
+                    <path d="M175 153.3 L177.6 153.3 L177.2 155.6 L177.8 158 L177.1 160.6 L177.7 163 L177.3 165.3 L175 165.3 Z" fill="#D1B993"/>
+                    <path d="M178 153.8 L186.6 153.9 L186.6 165.3 L177.9 165.3 L178.3 162.4 L177.8 159.2 Z" fill="#F1E8D6"/>
+                    <path d="M175.9 165.2 Q176.6 160.4 178.3 155.8 M176.4 165.3 Q177.3 161.8 178.9 159.4" stroke="#A88A5C" stroke-width=".2" fill="none"/>
+                    <g fill="#C5A877"><circle cx="178.2" cy="156.1" r=".22"/><circle cx="177.8" cy="157.3" r=".2"/><circle cx="177.4" cy="158.6" r=".22"/><circle cx="178.7" cy="159.6" r=".2"/><circle cx="178.2" cy="160.5" r=".18"/><circle cx="177" cy="160" r=".18"/></g>
+                    <g transform="rotate(-2.5 182 158)">
+                      <rect x="178.4" y="154.1" width="7.2" height="7.3" fill="#FAF6EE"/>
+                      <rect x="178.9" y="154.6" width="6.2" height="5.3" fill="#7A4426"/>
+                      <rect x="178.9" y="154.6" width="6.2" height="1.2" fill="#C49A70"/>
+                      <path d="M179.9 154.6 V155.8 M181 154.6 V155.8 M182.1 154.6 V155.8 M183.2 154.6 V155.8 M184.2 154.6 V155.8 M178.9 155.2 H185.1" stroke="#8B5A36" stroke-width=".14"/>
+                      <rect x="178.9" y="155.8" width=".7" height="4.1" fill="#5B2E1A"/>
+                      <rect x="184.4" y="155.8" width=".7" height="4.1" fill="#8A3F22"/>
+                      <rect x="179.6" y="155.8" width="4.8" height="4.1" fill="#A56B47"/>
+                      <rect x="182.2" y="156.1" width="1.2" height="1.1" fill="#E3C9A6"/>
+                      <path d="M179.2 159.9 L179.4 158.2 Q180.55 157.5 181.8 158.1 L182.1 159.9 Z" fill="#3F3A33"/>
+                      <circle cx="180.6" cy="157.15" r=".68" fill="#DFB295"/>
+                      <path d="M179.9 157.05 Q180 156.2 180.65 156.3 Q181.4 156.3 181.3 157 Q180.75 156.6 179.9 157.05 Z" fill="#2A211B"/>
+                      <path d="M181.6 159.9 L181.8 158.5 Q182.95 157.9 184.2 158.4 L184.5 159.9 Z" fill="#EEE5D6"/>
+                      <rect x="182.25" y="158.1" width="1.4" height=".48" rx=".22" fill="#2E2723"/>
+                      <circle cx="182.95" cy="157.55" r=".63" fill="#ECC4AA"/>
+                      <path d="M182.28 157.65 Q182.2 156.7 182.95 156.75 Q183.7 156.7 183.62 157.65 Q183.45 157.15 182.95 157.1 Q182.45 157.15 182.28 157.65 Z" fill="#3B2A20"/>
+                      <path d="M182.72 159.05 L182.78 158.62 L183 158.86 Q183.15 158.8 183.3 158.86 L183.52 158.62 L183.58 159.05 Q183.62 159.52 183.15 159.58 Q182.68 159.52 182.72 159.05 Z" fill="#1E1A17"/>
+                    </g>
+                    <rect x="181" y="153.5" width="2.3" height=".8" fill="#E3D5B8" opacity=".9" transform="rotate(-9 182.1 153.9)"/>
+                    <g transform="rotate(1.5 182.5 163.1)">
+                      <rect x="179" y="161.25" width="7" height="3.8" fill="#F6EFE0"/>
+                      <g stroke="#6E5C4A" stroke-width=".17" fill="none" stroke-linecap="round">
+                        <path d="M179.8 162.05 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
+                        <path d="M179.6 162.75 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
+                        <path d="M180.4 163.45 H182.1 M183.3 163.45 H185"/>
+                        <path d="M180 164.15 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
+                        <path d="M181.4 164.75 q.25 -.3 .5 0 t.5 0 t.5 0"/>
+                      </g>
+                      <path d="M184.1 161.95 c0 -.3 .45 -.3 .45 0 c0 -.3 .45 -.3 .45 0 c0 .3 -.45 .5 -.45 .6 c0 -.1 -.45 -.3 -.45 -.6 Z" fill="#C24B44"/>
+                      <path d="M182.4 163.35 c0 -.25 .35 -.25 .35 0 c0 -.25 .35 -.25 .35 0 c0 .25 -.35 .4 -.35 .5 c0 -.1 -.35 -.25 -.35 -.5 Z" stroke="#6E5C4A" stroke-width=".14" fill="none"/>
+                      <path d="M183.1 164.65 c0 -.22 .3 -.22 .3 0 c0 -.22 .3 -.22 .3 0 c0 .22 -.3 .36 -.3 .44 c0 -.08 -.3 -.22 -.3 -.44 Z" stroke="#6E5C4A" stroke-width=".13" fill="none"/>
+                    </g>
+                    <path d="M175.7 164.2 c0 -.35 .5 -.35 .5 0 c0 -.35 .5 -.35 .5 0 c0 .35 -.5 .6 -.5 .7 c0 -.1 -.5 -.35 -.5 -.7 Z" stroke="#B0956F" stroke-width=".16" fill="none"/>
+                  </g>
+                  <path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z" fill="url(#mug-curve)"/>
+                  <rect x="177.3" y="153.7" width=".6" height="11.4" rx=".3" fill="#fff" opacity=".3"/>
+                  <ellipse cx="181.7" cy="152.4" rx="6.5" ry="1.05" fill="#1C1D21"/>
+                  <ellipse cx="181.7" cy="152.58" rx="5.7" ry=".66" fill="#070708"/>
+                  <path d="M174.5 158.9 Q176.7 156.3 178.8 155.5" stroke="var(--figure)" stroke-width="2.7" stroke-linecap="round" fill="none"/>
                 </g>
               </g>
             </g>

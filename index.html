@@ -1132,6 +1132,7 @@
   };
 
   var frame = function (t) {
+    if (!W || !H) return;
     var dt = Math.min(.05, (t - (frame.last || t)) / 1000); frame.last = t;
     var off = Math.round(Math.min(extra, Math.max(0, window.scrollY * PAN)) * 2) / 2;
     if (off !== lastOff) { lastOff = off; sky.style.transform = "translate3d(0," + -off + "px,0)"; }
@@ -1203,6 +1204,7 @@
   var size = function () {
     var w = window.innerWidth, h = Math.round(c.getBoundingClientRect().height) || window.innerHeight;
     var d = Math.min(window.devicePixelRatio || 1, 2);
+    if (!w || !h) return;                           // no window yet (a hidden frame): wait for a real size
     if (w === W && h === H && d === dpr) return;    // a phone's address bar sliding is not a resize of the sky
     W = w; H = h; dpr = d;
     extra = Math.min(600, Math.max(0, Math.ceil((document.documentElement.scrollHeight - H) * PAN)));

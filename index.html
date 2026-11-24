@@ -140,7 +140,6 @@
   /* ---------- hero ---------- */
   .hero { display: grid; gap: 44px; padding: 64px 0 24px; }
   @media (min-width: 1080px) { .hero { grid-template-columns: 1.08fr .92fr; align-items: center; padding: 96px 0 48px; } }
-  @media (min-width: 720px) and (max-width: 1079px) { .chart-card { max-width: 680px; } }
   h1 { margin: 18px 0 0; font: 400 clamp(2.9rem, 8.4vw, 5.2rem)/1.0 var(--display); letter-spacing: -.02em; }
   h1 .sub { display: block; margin-top: .3em; font: italic 400 .5em/1.2 var(--display); letter-spacing: 0; color: var(--ink-2); }
   .lede { margin: 26px 0 0; max-width: 34rem; font-size: 1.1rem; color: var(--ink-2); }
@@ -160,10 +159,9 @@
   .socials a { display: inline-block; font: italic 400 1.02rem/1 var(--display); color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line-2); padding: 10px 0 3px; transition: color .2s, border-color .2s; }
   .socials a:hover { color: var(--accent); border-color: var(--accent); }
 
-  /* chart card */
-  .chart-card { margin: 0; padding: 24px 24px 20px; }
-  .chart-title { margin: 8px 0 2px; font: 400 1.4rem/1.2 var(--display); }
-  .chart-sub { margin: 0; font: italic 400 1rem/1.4 var(--display); color: var(--muted); }
+  /* the Timestral chart, inside its project tile */
+  .chart-title { display: block; font: 400 1.3rem/1.2 var(--display); color: var(--ink); }
+  .chart-sub { display: block; margin-top: 2px; font: italic 400 .98rem/1.4 var(--display); color: var(--muted); }
   .chart-svg { display: block; width: 100%; height: auto; margin-top: 14px; overflow: visible; }
   .chart-svg text { font: 500 14px var(--sans); fill: var(--muted); }
   .chart-svg .band { opacity: .2; }
@@ -178,11 +176,26 @@
   .legend li { display: flex; align-items: center; gap: 7px; }
   .sw { width: 16px; height: 2px; border-radius: 2px; flex: none; }
   .sw.band { height: 10px; border-radius: 3px; background: color-mix(in srgb, var(--accent) 24%, transparent); }
-  .score { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
-  .score div { background: var(--paper-sunk); border-radius: 14px; padding: 14px 16px; }
-  .score b { display: block; white-space: nowrap; font: 400 clamp(1.4rem, 3.6vw, 2.1rem)/1.1 var(--display); font-variant-numeric: lining-nums tabular-nums; }
-  .score .win b { color: var(--accent); }
-  .score span { font: 400 .8rem/1.35 var(--sans); color: var(--muted); }
+
+  /* the hero drawing: the man from the contact scene, closer, his own mug in his hands, under the fields he has worked in */
+  .hero-scene { margin: 0; }
+  .hero-scene svg { display: block; width: 100%; max-width: 500px; height: auto; margin-left: auto; overflow: visible; }
+  .hero-scene figcaption { margin: 4px 0 0 auto; max-width: 27rem; text-align: right; font: italic 400 clamp(1.15rem, 2.3vw, 1.45rem)/1.35 var(--display); color: var(--ink-2); }
+  .hero-scene figcaption em { color: var(--accent); }
+  .hero-scene .hs-fields text { font: 500 11.5px var(--sans); letter-spacing: .12em; text-transform: uppercase; fill: var(--muted); }
+  @media (max-width: 600px) { .hero-scene .hs-fields text { font-size: 13px; letter-spacing: .08em; } }
+  .hero-scene .hs-path { stroke-dasharray: 1; animation: hs-trace 3.4s linear .5s both; }
+  @keyframes hs-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .hero-scene .hs-star { transform-box: fill-box; transform-origin: center; animation: hs-lit .7s ease-out var(--t) both, hs-glint 5s ease-in-out calc(var(--t) + 1.5s) infinite; }
+  .hero-scene .hs-star:nth-of-type(2n) { animation-duration: .7s, 6.5s; }
+  @keyframes hs-lit { from { opacity: 0; transform: scale(.3); } }
+  @keyframes hs-glint { 50% { opacity: .6; } }
+  .hero-scene .hs-fields text { animation: hs-name .9s ease var(--t) both; }
+  @keyframes hs-name { from { opacity: 0; } }
+  .hero-scene .steam path { animation: steam 3.4s ease-out infinite; opacity: 0; }
+  .hero-scene .steam path:last-child { animation-delay: 1.7s; }
+  @media (max-width: 1079px) { .hero-scene svg { margin: 0 auto; } .hero-scene figcaption { margin: 4px auto 0; text-align: center; } }
+  @media (prefers-reduced-motion: reduce) { .hero-scene * { animation: none !important; } .hero-scene .steam path { opacity: .5; } }
 
   /* stats */
   .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-top: 32px; border-top: 1px solid var(--line); }
@@ -223,7 +236,13 @@
   .tile { display: flex; flex-direction: column; padding: 26px; min-height: 240px; text-decoration: none; color: inherit; transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
   .tile:hover { transform: translateY(-3px); border-color: var(--line-2); box-shadow: var(--shadow-up); }
   .tile:focus-visible { outline-offset: 4px; }
-  @media (min-width: 720px) { .tile.feature { grid-column: span 2; } }
+  @media (min-width: 720px) { .tile.feature, .tile.more { grid-column: 1 / -1; } .tile.more { min-height: 0; } }
+  .feature-chart { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
+  @media (min-width: 1000px) {
+    .tile.feature { display: grid; grid-template-columns: 1fr 1.1fr; column-gap: 36px; }
+    .feature-text { display: flex; flex-direction: column; }
+    .feature-chart { margin: 0; padding: 0 0 0 36px; border: 0; border-left: 1px solid var(--line); }
+  }
   .tile-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .tag { font: 500 .7rem/1.2 var(--sans); letter-spacing: .13em; text-transform: uppercase; color: var(--muted); }
   .tag.hot { color: var(--accent); }
@@ -339,7 +358,7 @@
 
   /* print: a clean, light, one-column CV */
   @media print {
-    #bg, #sky, .nav, .skip, .ctas, .moon-scene, .menu-btn, .visits { display: none !important; }
+    #bg, #sky, .nav, .skip, .ctas, .moon-scene, .hero-scene, .menu-btn, .visits { display: none !important; }
     :root {
       --page: #fff; --paper: #fff; --paper-sunk: #f2f3f5; --ink: #000; --ink-2: #222; --muted: #444; --accent: #6b4b00;
       --line: #ccc; --line-2: #999; --chart-actual: #000; --chart-rte: #777; color-scheme: light; }
@@ -402,51 +421,79 @@
         </ul>
       </div>
 
-      <figure class="paper chart-card">
-        <span class="label" style="color:var(--accent)">Timestral vs RTE</span>
-        <p class="chart-title">French electricity demand, a day ahead</p>
-        <p class="chart-sub">one week of the pre-registered backtest, 22–28 June 2026</p>
-        <svg class="chart-svg" id="chart" viewBox="0 0 480 260" role="img" aria-labelledby="chart-title" aria-describedby="chart-desc">
-          <title id="chart-title">Timestral and RTE day-ahead forecasts against actual French electricity demand, 22 to 28 June 2026</title>
-          <desc id="chart-desc">Hourly French electricity demand from 22 to 28 June 2026, between about 35 and 60 gigawatts, with Timestral's median forecast and 10 to 90 percent band, and RTE's official day-ahead forecast. Both forecasts track the daily cycle; over the whole June to August test, Timestral's average error was 808 MW against 1,216 MW for RTE.</desc>
-          <line x1="62" x2="476" y1="228.0" y2="228.0" stroke="var(--line)" stroke-width="1"/>
-          <text x="54" y="233.0" text-anchor="end">30</text>
-          <line x1="62" x2="476" y1="174.0" y2="174.0" stroke="var(--line)" stroke-width="1"/>
-          <text x="54" y="179.0" text-anchor="end">40</text>
-          <line x1="62" x2="476" y1="120.0" y2="120.0" stroke="var(--line)" stroke-width="1"/>
-          <text x="54" y="125.0" text-anchor="end">50</text>
-          <line x1="62" x2="476" y1="66.0" y2="66.0" stroke="var(--line)" stroke-width="1"/>
-          <text x="54" y="71.0" text-anchor="end">60</text>
-          <line x1="62" x2="476" y1="12.0" y2="12.0" stroke="var(--line)" stroke-width="1"/>
-          <text x="54" y="17.0" text-anchor="end">70 GW</text>
-          <text x="91.7" y="252" text-anchor="middle">Mon</text>
-          <line x1="121.5" x2="121.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="151.2" y="252" text-anchor="middle">Tue</text>
-          <line x1="181.0" x2="181.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="210.7" y="252" text-anchor="middle">Wed</text>
-          <line x1="240.5" x2="240.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="270.2" y="252" text-anchor="middle">Thu</text>
-          <line x1="300.0" x2="300.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="329.7" y="252" text-anchor="middle">Fri</text>
-          <line x1="359.5" x2="359.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="389.2" y="252" text-anchor="middle">Sat</text>
-          <line x1="419.0" x2="419.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
-          <text x="448.7" y="252" text-anchor="middle">Sun</text>
-          <path class="fade band" d="M62.0 141.5L64.5 159.0L67.0 166.7L69.4 182.0L71.9 188.6L74.4 184.6L76.9 167.2L79.4 143.6L81.8 122.6L84.3 106.8L86.8 96.6L89.3 89.9L91.7 81.7L94.2 78.6L96.7 79.7L99.2 79.4L101.7 87.1L104.1 92.6L106.6 90.7L109.1 84.0L111.6 91.8L114.1 107.9L116.5 108.2L119.0 107.6L121.5 118.5L124.0 137.1L126.5 147.9L128.9 161.1L131.4 167.5L133.9 166.2L136.4 153.9L138.9 132.8L141.3 112.3L143.8 95.9L146.3 85.3L148.8 77.7L151.2 69.0L153.7 66.3L156.2 66.3L158.7 65.8L161.2 72.7L163.6 77.8L166.1 76.7L168.6 73.2L171.1 80.7L173.6 96.0L176.0 100.7L178.5 99.9L181.0 110.7L183.5 128.9L186.0 145.0L188.4 158.6L190.9 165.3L193.4 163.7L195.9 153.3L198.3 135.1L200.8 116.1L203.3 98.3L205.8 85.8L208.3 77.2L210.7 67.9L213.2 63.6L215.7 62.7L218.2 62.1L220.7 68.0L223.1 72.2L225.6 72.0L228.1 69.1L230.6 76.8L233.1 90.8L235.5 96.6L238.0 95.6L240.5 106.5L243.0 125.8L245.4 139.6L247.9 153.2L250.4 159.7L252.9 158.4L255.4 148.5L257.8 130.4L260.3 111.6L262.8 94.5L265.3 81.8L267.8 72.5L270.2 62.5L272.7 58.2L275.2 56.9L277.7 56.5L280.2 62.7L282.6 66.7L285.1 66.3L287.6 64.9L290.1 73.1L292.6 86.3L295.0 90.9L297.5 90.7L300.0 103.0L302.5 123.3L304.9 138.6L307.4 152.0L309.9 159.1L312.4 157.4L314.9 147.4L317.3 128.7L319.8 109.5L322.3 93.3L324.8 81.4L327.3 72.6L329.7 64.3L332.2 61.0L334.7 60.7L337.2 61.4L339.7 69.1L342.1 73.3L344.6 73.9L347.1 73.9L349.6 82.4L352.0 95.0L354.5 99.2L357.0 95.6L359.5 107.2L362.0 127.3L364.4 148.2L366.9 162.6L369.4 171.4L371.9 173.5L374.4 173.5L376.8 166.1L379.3 154.5L381.8 137.0L384.3 122.3L386.8 111.8L389.2 100.3L391.7 94.3L394.2 97.0L396.7 97.0L399.1 104.0L401.6 107.0L404.1 106.1L406.6 104.9L409.1 109.8L411.5 120.2L414.0 119.8L416.5 114.5L419.0 123.7L421.5 142.6L423.9 158.0L426.4 171.5L428.9 180.9L431.4 185.0L433.9 187.1L436.3 183.8L438.8 175.8L441.3 159.6L443.8 140.6L446.3 125.0L448.7 111.5L451.2 105.5L453.7 109.1L456.2 108.5L458.6 114.2L461.1 116.7L463.6 112.7L466.1 106.5L468.6 106.0L471.0 113.6L473.5 112.9L476.0 112.1L476.0 132.6L473.5 134.8L471.0 131.7L468.6 124.2L466.1 124.6L463.6 130.4L461.1 133.6L458.6 130.9L456.2 124.3L453.7 124.1L451.2 120.0L448.7 125.1L446.3 138.1L443.8 153.3L441.3 172.2L438.8 187.4L436.3 195.1L433.9 198.2L431.4 195.7L428.9 191.4L426.4 182.3L423.9 168.5L421.5 165.0L419.0 146.3L416.5 136.6L414.0 142.4L411.5 142.4L409.1 132.3L406.6 127.3L404.1 128.0L401.6 128.0L399.1 124.4L396.7 116.7L394.2 115.6L391.7 112.3L389.2 117.2L386.8 127.9L384.3 137.9L381.8 152.3L379.3 168.7L376.8 179.8L374.4 186.3L371.9 185.5L369.4 183.3L366.9 174.5L364.4 160.1L362.0 149.3L359.5 129.2L357.0 117.5L354.5 121.5L352.0 115.2L349.6 103.2L347.1 94.5L344.6 93.8L342.1 92.4L339.7 87.3L337.2 78.8L334.7 77.0L332.2 76.4L329.7 79.0L327.3 86.7L324.8 95.3L322.3 106.5L319.8 122.1L317.3 141.5L314.9 159.3L312.4 168.4L309.9 169.8L307.4 163.0L304.9 149.6L302.5 145.4L300.0 125.0L297.5 112.6L295.0 113.8L292.6 108.2L290.1 95.5L287.6 87.1L285.1 87.8L282.6 87.3L280.2 82.2L277.7 75.1L275.2 74.4L272.7 74.3L270.2 77.8L267.8 86.9L265.3 95.7L262.8 107.5L260.3 124.2L257.8 143.1L255.4 160.4L252.9 169.4L250.4 170.5L247.9 164.1L245.4 150.6L243.0 149.5L240.5 130.3L238.0 119.2L235.5 121.6L233.1 113.8L230.6 100.3L228.1 92.5L225.6 94.9L223.1 94.3L220.7 89.2L218.2 82.2L215.7 81.6L213.2 81.1L210.7 84.6L208.3 92.9L205.8 100.9L203.3 112.5L200.8 129.8L198.3 148.7L195.9 166.1L193.4 175.8L190.9 177.2L188.4 170.6L186.0 156.9L183.5 153.5L181.0 135.1L178.5 124.3L176.0 126.0L173.6 120.2L171.1 106.1L168.6 99.0L166.1 101.9L163.6 102.2L161.2 96.8L158.7 89.1L156.2 88.1L153.7 87.2L151.2 88.9L148.8 96.4L146.3 103.0L143.8 112.6L141.3 127.9L138.9 147.8L136.4 168.1L133.9 179.6L131.4 180.4L128.9 174.2L126.5 160.9L124.0 165.8L121.5 148.4L119.0 137.7L116.5 139.4L114.1 133.1L111.6 117.7L109.1 110.0L106.6 116.4L104.1 117.7L101.7 111.9L99.2 103.7L96.7 103.3L94.2 101.4L91.7 103.7L89.3 111.1L86.8 117.5L84.3 126.7L81.8 141.7L79.4 161.3L76.9 183.0L74.4 197.9L71.9 201.4L69.4 194.8L67.0 180.2L64.5 180.4L62.0 163.7Z" fill="var(--accent)"/>
-          <path class="fade rte" d="M62.0 152.5L64.5 166.0L67.0 175.3L69.4 186.3L71.9 188.9L74.4 183.7L76.9 169.1L79.4 148.6L81.8 131.4L84.3 118.9L86.8 108.7L89.3 104.4L91.7 98.3L94.2 94.3L96.7 88.4L99.2 89.3L101.7 93.3L104.1 93.4L106.6 86.8L109.1 86.7L111.6 101.5L114.1 112.3L116.5 113.8L119.0 114.0L121.5 134.1L124.0 149.1L126.5 157.8L128.9 169.2L131.4 174.5L133.9 168.6L136.4 153.8L138.9 134.7L141.3 117.6L143.8 103.7L146.3 96.1L148.8 89.4L151.2 83.8L153.7 82.5L156.2 79.8L158.7 81.8L161.2 86.2L163.6 86.2L166.1 79.8L168.6 77.3L171.1 91.9L173.6 105.9L176.0 107.0L178.5 106.2L181.0 120.9L183.5 134.3L186.0 148.6L188.4 163.8L190.9 168.4L193.4 160.6L195.9 147.6L198.3 127.1L200.8 113.4L203.3 98.5L205.8 90.0L208.3 84.1L210.7 76.8L213.2 77.6L215.7 74.4L218.2 79.4L220.7 86.6L223.1 86.6L225.6 79.3L228.1 75.9L230.6 87.3L233.1 97.9L235.5 98.5L238.0 99.5L240.5 119.1L243.0 137.1L245.4 150.7L247.9 164.3L250.4 168.7L252.9 163.5L255.4 149.6L257.8 131.6L260.3 113.0L262.8 97.5L265.3 90.4L267.8 82.8L270.2 78.5L272.7 79.0L275.2 75.4L277.7 79.4L280.2 82.8L282.6 81.8L285.1 77.9L287.6 78.6L290.1 87.7L292.6 98.9L295.0 97.1L297.5 97.5L300.0 119.9L302.5 135.1L304.9 147.6L307.4 160.6L309.9 165.0L312.4 160.0L314.9 146.0L317.3 125.8L319.8 111.8L322.3 100.3L324.8 91.7L327.3 87.5L329.7 83.5L332.2 83.0L334.7 80.3L337.2 87.5L339.7 94.4L342.1 94.6L344.6 91.3L347.1 90.8L349.6 101.4L352.0 109.8L354.5 108.7L357.0 105.2L359.5 126.8L362.0 141.1L364.4 155.7L366.9 171.8L369.4 179.9L371.9 179.9L374.4 177.5L376.8 171.3L379.3 161.4L381.8 147.9L384.3 137.3L386.8 128.7L389.2 116.4L391.7 118.1L394.2 117.8L396.7 121.6L399.1 129.3L401.6 129.5L404.1 122.2L406.6 118.2L409.1 125.9L411.5 134.0L414.0 128.6L416.5 124.8L419.0 146.9L421.5 160.0L423.9 170.7L426.4 183.9L428.9 191.6L431.4 195.0L433.9 197.9L436.3 193.8L438.8 184.5L441.3 171.2L443.8 157.3L446.3 146.2L448.7 134.9L451.2 136.8L453.7 137.8L456.2 143.3L458.6 153.2L461.1 151.8L463.6 142.1L466.1 131.0L468.6 132.7L471.0 137.2L473.5 134.3L476.0 133.1" fill="none" stroke="var(--chart-rte)" stroke-width="1.5" stroke-dasharray="4 3"/>
-          <path class="draw" pathLength="1" d="M62.0 141.0L64.5 160.6L67.0 171.5L69.4 183.6L71.9 189.9L74.4 185.5L76.9 172.2L79.4 151.9L81.8 130.9L84.3 110.8L86.8 97.9L89.3 88.4L91.7 79.4L94.2 75.4L96.7 75.2L99.2 74.5L101.7 83.8L104.1 88.5L106.6 88.4L109.1 84.1L111.6 90.6L114.1 102.6L116.5 104.8L119.0 103.2L121.5 118.6L124.0 140.1L126.5 151.9L128.9 166.6L131.4 172.8L133.9 171.0L136.4 159.6L138.9 140.9L141.3 121.2L143.8 102.9L146.3 91.7L148.8 83.7L151.2 75.3L153.7 71.3L156.2 71.2L158.7 72.3L161.2 80.4L163.6 83.9L166.1 82.4L168.6 79.8L171.1 85.8L173.6 97.7L176.0 102.4L178.5 99.8L181.0 116.2L183.5 138.0L186.0 148.9L188.4 162.4L190.9 169.0L193.4 167.1L195.9 156.7L198.3 139.4L200.8 120.0L203.3 101.7L205.8 88.8L208.3 78.9L210.7 69.2L213.2 65.4L215.7 65.9L218.2 67.5L220.7 75.1L223.1 79.5L225.6 79.8L228.1 77.1L230.6 82.7L233.1 93.8L235.5 97.1L238.0 96.7L240.5 113.4L243.0 133.3L245.4 142.6L247.9 157.0L250.4 163.8L252.9 162.2L255.4 151.6L257.8 133.0L260.3 114.1L262.8 97.7L265.3 84.8L267.8 74.7L270.2 66.8L272.7 64.1L275.2 64.5L277.7 65.9L280.2 74.4L282.6 78.3L285.1 77.7L287.6 76.2L290.1 84.2L292.6 95.7L295.0 98.6L297.5 97.2L300.0 112.0L302.5 132.5L304.9 143.7L307.4 157.3L309.9 162.5L312.4 161.2L314.9 151.3L317.3 134.0L319.8 116.5L322.3 100.5L324.8 88.8L327.3 79.3L329.7 73.4L332.2 70.8L334.7 72.4L337.2 74.2L339.7 81.1L342.1 85.2L344.6 85.0L347.1 85.6L349.6 93.2L352.0 104.4L354.5 109.4L357.0 108.1L359.5 121.8L362.0 142.9L364.4 154.9L366.9 169.1L369.4 177.0L371.9 180.8L374.4 181.0L376.8 176.2L379.3 166.2L381.8 148.9L384.3 133.5L386.8 121.1L389.2 109.1L391.7 102.7L394.2 104.6L396.7 105.3L399.1 113.1L401.6 116.1L404.1 115.4L406.6 114.5L409.1 119.1L411.5 127.5L414.0 130.5L416.5 128.4L419.0 140.1L421.5 158.8L423.9 167.5L426.4 181.8L428.9 190.2L431.4 193.5L433.9 196.0L436.3 193.7L438.8 186.7L441.3 171.9L443.8 157.5L446.3 144.7L448.7 134.8L451.2 128.0L453.7 131.0L456.2 130.6L458.6 138.0L461.1 138.8L463.6 136.5L466.1 129.0L468.6 129.7L471.0 137.5L473.5 140.0L476.0 136.0" fill="none" stroke="var(--chart-actual)" stroke-width="1.6" stroke-linejoin="round"/>
-          <path class="draw med" pathLength="1" d="M62.0 152.9L64.5 169.2L67.0 173.1L69.4 188.1L71.9 194.6L74.4 190.8L76.9 175.0L79.4 152.3L81.8 132.0L84.3 116.4L86.8 106.7L89.3 100.2L91.7 92.4L94.2 89.5L96.7 90.8L99.2 91.0L101.7 99.0L104.1 104.9L106.6 103.4L109.1 96.7L111.6 104.4L114.1 120.4L116.5 123.8L119.0 122.8L121.5 133.6L124.0 151.4L126.5 154.2L128.9 167.5L131.4 173.7L133.9 172.7L136.4 160.9L138.9 140.2L141.3 120.1L143.8 104.3L146.3 94.3L148.8 87.1L151.2 78.9L153.7 76.4L156.2 77.0L158.7 77.2L161.2 84.7L163.6 90.1L166.1 89.4L168.6 85.9L171.1 93.4L173.6 108.2L176.0 113.4L178.5 112.5L181.0 123.5L183.5 141.3L186.0 150.8L188.4 164.5L190.9 171.0L193.4 169.4L195.9 159.5L198.3 141.7L200.8 122.8L203.3 105.3L205.8 93.2L208.3 84.8L210.7 75.9L213.2 71.7L215.7 71.4L218.2 71.3L220.7 77.8L223.1 82.6L225.6 83.0L228.1 80.0L230.6 87.9L233.1 102.0L235.5 108.6L238.0 107.3L240.5 118.4L243.0 137.3L245.4 144.9L247.9 158.6L250.4 164.8L252.9 163.5L255.4 154.3L257.8 136.6L260.3 117.7L262.8 100.9L265.3 88.6L267.8 79.4L270.2 69.8L272.7 65.7L275.2 65.0L277.7 65.1L280.2 71.8L282.6 76.4L285.1 76.5L287.6 75.3L290.1 83.6L292.6 96.9L295.0 101.9L297.5 101.5L300.0 113.8L302.5 133.9L304.9 144.0L307.4 157.4L309.9 164.2L312.4 162.5L314.9 153.0L317.3 134.8L319.8 115.4L322.3 99.5L324.8 87.9L327.3 79.2L329.7 71.2L332.2 67.9L334.7 68.1L337.2 69.2L339.7 77.4L342.1 82.1L344.6 83.2L347.1 83.4L349.6 92.0L352.0 104.5L354.5 110.0L357.0 106.5L359.5 118.3L362.0 138.1L364.4 153.9L366.9 168.1L369.4 176.8L371.9 178.8L374.4 179.2L376.8 172.5L379.3 161.0L381.8 144.1L384.3 129.7L386.8 119.5L389.2 108.3L391.7 102.5L394.2 105.8L396.7 106.2L399.1 113.7L401.6 117.0L404.1 116.9L406.6 115.9L409.1 120.8L411.5 131.1L414.0 130.7L416.5 125.6L419.0 135.2L421.5 153.6L423.9 163.3L426.4 176.7L428.9 185.9L431.4 190.0L433.9 192.4L436.3 189.3L438.8 181.3L441.3 165.6L443.8 146.8L446.3 131.7L448.7 118.3L451.2 112.5L453.7 116.7L456.2 116.3L458.6 122.4L461.1 125.0L463.6 121.6L466.1 115.5L468.6 115.0L471.0 122.7L473.5 123.6L476.0 122.4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
+      <figure class="hero-scene">
+        <svg viewBox="0 0 480 470" role="img" aria-labelledby="hs-title">
+          <title id="hs-title">The same man as at the bottom of the page, closer: his own mug of coffee in his hands, printed with a photo, looking up at the Big Dipper, whose seven stars are named after fields he has worked in: optimisation, quantum computing, markets, forecasting, Darija NLP, LLM agents and graphs.</title>
+          <defs>
+            <radialGradient id="hs-glow"><stop offset="0" stop-color="#F0E4C3" stop-opacity=".5"/><stop offset="1" stop-color="#F0E4C3" stop-opacity="0"/></radialGradient>
+            <linearGradient id="hs-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".85" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <mask id="hs-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="470"><rect width="480" height="470" fill="url(#hs-fade)"/></mask>
+            <linearGradient id="hs-cyl" x1="0" x2="1"><stop offset="0" stop-color="#1A140E" stop-opacity=".34"/><stop offset=".14" stop-color="#1A140E" stop-opacity="0"/><stop offset=".86" stop-color="#1A140E" stop-opacity="0"/><stop offset="1" stop-color="#1A140E" stop-opacity=".3"/></linearGradient>
+            <clipPath id="hs-mug"><path d="M196 312 V386.4 A33 5.2 0 0 0 262 386.4 V312 Z"/></clipPath>
+          </defs>
+
+          <!-- a few faint stars -->
+          <g fill="#F0E4C3" opacity=".6">
+            <circle cx="58" cy="44" r="1"/><circle cx="112" cy="96" r=".8"/><circle cx="26" cy="168" r=".9"/><circle cx="246" cy="26" r=".9"/>
+            <circle cx="372" cy="70" r=".8"/><circle cx="468" cy="196" r="1"/><circle cx="298" cy="214" r=".8"/><circle cx="412" cy="258" r=".9"/>
+            <circle cx="452" cy="338" r=".8"/><circle cx="330" cy="300" r="1"/><circle cx="286" cy="386" r=".7"/><circle cx="398" cy="420" r=".9"/>
+          </g>
+
+          <!-- the Big Dipper, its stars named after the fields he has worked in; the line is the way he went -->
+          <path class="hs-path" pathLength="1" d="M159.8 198.3 L199.6 130.8 L249.6 118.5 L314.4 105.6 L350.5 145.7 L437.8 113.4 L434.6 49 L314.4 105.6" fill="none" stroke="#F0E4C3" stroke-opacity=".34" stroke-width="1.1" stroke-linejoin="round"/>
+          <g class="hs-star" style="--t:.5s"><circle cx="159.8" cy="198.3" r="9" fill="url(#hs-glow)"/><circle cx="159.8" cy="198.3" r="2.5" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1s"><circle cx="199.6" cy="130.8" r="9" fill="url(#hs-glow)"/><circle cx="199.6" cy="130.8" r="2.4" fill="#FFF6E0"/><circle cx="196.4" cy="129.6" r=".9" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1.32s"><circle cx="249.6" cy="118.5" r="9.5" fill="url(#hs-glow)"/><circle cx="249.6" cy="118.5" r="2.6" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1.73s"><circle cx="314.4" cy="105.6" r="7.5" fill="url(#hs-glow)"/><circle cx="314.4" cy="105.6" r="2" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:2.07s"><circle cx="350.5" cy="145.7" r="8.5" fill="url(#hs-glow)"/><circle cx="350.5" cy="145.7" r="2.3" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:2.66s"><circle cx="437.8" cy="113.4" r="8.5" fill="url(#hs-glow)"/><circle cx="437.8" cy="113.4" r="2.3" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:3.06s"><circle cx="434.6" cy="49" r="9.5" fill="url(#hs-glow)"/><circle cx="434.6" cy="49" r="2.6" fill="#FFF6E0"/></g>
+          <g class="hs-fields">
+            <text style="--t:.65s" x="150" y="203" text-anchor="end">Optimisation</text>
+            <text style="--t:1.15s" x="189" y="124" text-anchor="end">Quantum</text>
+            <text style="--t:1.47s" x="249.6" y="105" text-anchor="middle">Markets</text>
+            <text style="--t:1.88s" x="296" y="88" text-anchor="middle">Forecasting</text>
+            <text style="--t:2.22s" x="350.5" y="166" text-anchor="middle">Darija NLP</text>
+            <text style="--t:2.81s" x="428" y="118" text-anchor="end">LLM agents</text>
+            <text style="--t:3.21s" x="434.6" y="35" text-anchor="middle">Graphs</text>
+          </g>
+
+          <!-- him, closer than at the bottom of the page -->
+          <g mask="url(#hs-mask)"><g transform="translate(34 0)">
+            <path d="M28 470 C30 414 50 370 96 352 C130 339 172 342 196 362 C214 378 222 420 226 470 Z" fill="#737C89"/>
+            <path d="M124 316 L125 338" stroke="#C9CED6" stroke-width="32" stroke-linecap="round"/>
+            <path d="M90 352 C102 332 148 329 162 347 C148 360 104 362 90 352 Z" fill="#636B78"/>
+            <!-- his head, tipped back to look up -->
+            <g transform="translate(112 296) rotate(-42)">
+              <circle r="36" fill="#C9CED6"/>
+              <path d="M20 -30 C30 -24 34 -16 34 -10 L44 4 Q45 7 41 8 L36 9 Q38 12 36 15 Q37 19 35 22 Q32 32 20 35 L0 36 L0 -10 Z" fill="#C9CED6"/>
+              <path d="M16 -33 C4 -41 -26 -37 -34 -14 C-38 0 -34 16 -26 27 C-24 18 -19 9 -15 3 C-11 -4 -9 -12 -5 -18 C1 -25 9 -27 16 -33 Z" fill="#59616E"/>
+              <ellipse cx="-6" cy="7" rx="4.5" ry="6.5" fill="#B3BAC5"/>
+            </g>
+            <!-- his forearm rising to the mug, the palm behind it -->
+            <path d="M146 470 L190 386" stroke="#949DAA" stroke-width="26" stroke-linecap="round"/>
+            <ellipse cx="195" cy="358" rx="11" ry="17" fill="#C9CED6"/>
+
+            <!-- his mug: the real one, its photo printed on the front -->
+            <path d="M261 324 C298 319 303 379 261 376" stroke="#15171B" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <path d="M261 324 C298 319 303 379 261 376" transform="translate(261 350) scale(1.1) translate(-261 -350)" pathLength="1" stroke-dasharray=".58 1" stroke="#8A929D" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M196 312 V386.4 A33 5.2 0 0 0 262 386.4 V312 Z" fill="#EEE9E0"/>
+            <image href="mug.jpg" x="196" y="311.4" width="66" height="78.4" preserveAspectRatio="none" clip-path="url(#hs-mug)"/>
+            <path d="M196 312 V386.4 A33 5.2 0 0 0 262 386.4 V312 Z" fill="url(#hs-cyl)"/>
+            <ellipse cx="229" cy="312" rx="33" ry="5.3" fill="#1D1E22"/>
+            <ellipse cx="229" cy="312.6" rx="30" ry="4.1" fill="#0B0B0D"/>
+            <ellipse cx="229" cy="313.7" rx="27" ry="3" fill="#3A2417"/>
+            <ellipse cx="224" cy="313.2" rx="11.5" ry="1" fill="#5A3A24" opacity=".8"/>
+            <!-- his fingers round the front edge -->
+            <path d="M193 346 H204 M193 355.5 H205.5 M194 365 H204.5" stroke="#C9CED6" stroke-width="8.5" stroke-linecap="round"/>
+          </g></g>
+
+          <!-- steam off the coffee -->
+          <g class="steam" stroke="#E2D6B4" stroke-width="2.4" fill="none" stroke-linecap="round" transform="translate(34 0)">
+            <path d="M222 306 q-7 -10 0 -20 q7 -10 0 -20"/><path d="M236 304 q-7 -10 0 -20 q7 -10 0 -20"/>
+          </g>
         </svg>
-        <ul class="legend" aria-hidden="true">
-          <li><span class="sw" style="background:var(--chart-actual)"></span>Actual</li>
-          <li><span class="sw" style="background:var(--accent);height:3px"></span>Timestral median</li>
-          <li><span class="sw band"></span>10–90% band</li>
-          <li><span class="sw" style="background:repeating-linear-gradient(90deg,var(--chart-rte) 0 4px,transparent 4px 7px)"></span>RTE day-ahead (J-1)</li>
-        </ul>
-        <div class="score">
-          <div class="win"><b>808 MW</b><span>Timestral error (MAE), Jun–Aug</span></div>
-          <div><b>1,216 MW</b><span>RTE day-ahead error (MAE)</span></div>
-        </div>
+        <figcaption>I follow hard problems across fields, and bring the same <em>honesty</em> to each.</figcaption>
       </figure>
     </header>
 
@@ -480,15 +527,58 @@
       </div>
       <div class="bento">
         <a class="paper tile feature rv" href="https://github.com/qudotcom/timestral-vs-rte">
-          <div class="tile-top"><span class="tag hot">Forecasting · Mistral × ClickHouse</span><span class="go" aria-hidden="true">→</span></div>
-          <h3>Timestral vs RTE: <i>a foundation model against the grid operator</i></h3>
-          <p>Mistral's Timestral, zero-shot on a laptop CPU, against France's official day-ahead demand forecast. Pre-registered protocol, leakage-safe contexts queried from ClickHouse, SQL metrics, a live next-day forecast and a Mistral-written operator brief traced in Langfuse.</p>
-          <div class="big">
-            <div><b>808 MW</b><span>Timestral MAE</span></div>
-            <div><b>1,216 MW</b><span>RTE day-ahead MAE</span></div>
-            <div><b>76%</b><span>of days better</span></div>
+          <div class="feature-text">
+            <div class="tile-top"><span class="tag hot">Forecasting · Mistral × ClickHouse</span><span class="go" aria-hidden="true">→</span></div>
+            <h3>Timestral vs RTE: <i>a foundation model against the grid operator</i></h3>
+            <p>Mistral's Timestral, zero-shot on a laptop CPU, against France's official day-ahead demand forecast. Pre-registered protocol, leakage-safe contexts queried from ClickHouse, SQL metrics, a live next-day forecast and a Mistral-written operator brief traced in Langfuse.</p>
+            <div class="big">
+              <div><b>808 MW</b><span>Timestral MAE</span></div>
+              <div><b>1,216 MW</b><span>RTE day-ahead MAE</span></div>
+              <div><b>76%</b><span>of days better</span></div>
+            </div>
+            <ul class="chips"><li>Timestral</li><li>ClickHouse</li><li>Langfuse</li><li>Mistral API</li></ul>
           </div>
-          <ul class="chips"><li>Timestral</li><li>ClickHouse</li><li>Langfuse</li><li>Mistral API</li></ul>
+          <div class="feature-chart">
+            <span class="chart-title">French electricity demand, a day ahead</span>
+            <span class="chart-sub">one week of the pre-registered backtest, 22–28 June 2026</span>
+            <svg class="chart-svg" id="chart" viewBox="0 0 480 260" role="img" aria-labelledby="chart-title" aria-describedby="chart-desc">
+              <title id="chart-title">Timestral and RTE day-ahead forecasts against actual French electricity demand, 22 to 28 June 2026</title>
+              <desc id="chart-desc">Hourly French electricity demand from 22 to 28 June 2026, between about 35 and 60 gigawatts, with Timestral's median forecast and 10 to 90 percent band, and RTE's official day-ahead forecast. Both forecasts track the daily cycle; over the whole June to August test, Timestral's average error was 808 MW against 1,216 MW for RTE.</desc>
+              <line x1="62" x2="476" y1="228.0" y2="228.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="233.0" text-anchor="end">30</text>
+              <line x1="62" x2="476" y1="174.0" y2="174.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="179.0" text-anchor="end">40</text>
+              <line x1="62" x2="476" y1="120.0" y2="120.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="125.0" text-anchor="end">50</text>
+              <line x1="62" x2="476" y1="66.0" y2="66.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="71.0" text-anchor="end">60</text>
+              <line x1="62" x2="476" y1="12.0" y2="12.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="17.0" text-anchor="end">70 GW</text>
+              <text x="91.7" y="252" text-anchor="middle">Mon</text>
+              <line x1="121.5" x2="121.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="151.2" y="252" text-anchor="middle">Tue</text>
+              <line x1="181.0" x2="181.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="210.7" y="252" text-anchor="middle">Wed</text>
+              <line x1="240.5" x2="240.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="270.2" y="252" text-anchor="middle">Thu</text>
+              <line x1="300.0" x2="300.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="329.7" y="252" text-anchor="middle">Fri</text>
+              <line x1="359.5" x2="359.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="389.2" y="252" text-anchor="middle">Sat</text>
+              <line x1="419.0" x2="419.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="448.7" y="252" text-anchor="middle">Sun</text>
+              <path class="fade band" d="M62.0 141.5L64.5 159.0L67.0 166.7L69.4 182.0L71.9 188.6L74.4 184.6L76.9 167.2L79.4 143.6L81.8 122.6L84.3 106.8L86.8 96.6L89.3 89.9L91.7 81.7L94.2 78.6L96.7 79.7L99.2 79.4L101.7 87.1L104.1 92.6L106.6 90.7L109.1 84.0L111.6 91.8L114.1 107.9L116.5 108.2L119.0 107.6L121.5 118.5L124.0 137.1L126.5 147.9L128.9 161.1L131.4 167.5L133.9 166.2L136.4 153.9L138.9 132.8L141.3 112.3L143.8 95.9L146.3 85.3L148.8 77.7L151.2 69.0L153.7 66.3L156.2 66.3L158.7 65.8L161.2 72.7L163.6 77.8L166.1 76.7L168.6 73.2L171.1 80.7L173.6 96.0L176.0 100.7L178.5 99.9L181.0 110.7L183.5 128.9L186.0 145.0L188.4 158.6L190.9 165.3L193.4 163.7L195.9 153.3L198.3 135.1L200.8 116.1L203.3 98.3L205.8 85.8L208.3 77.2L210.7 67.9L213.2 63.6L215.7 62.7L218.2 62.1L220.7 68.0L223.1 72.2L225.6 72.0L228.1 69.1L230.6 76.8L233.1 90.8L235.5 96.6L238.0 95.6L240.5 106.5L243.0 125.8L245.4 139.6L247.9 153.2L250.4 159.7L252.9 158.4L255.4 148.5L257.8 130.4L260.3 111.6L262.8 94.5L265.3 81.8L267.8 72.5L270.2 62.5L272.7 58.2L275.2 56.9L277.7 56.5L280.2 62.7L282.6 66.7L285.1 66.3L287.6 64.9L290.1 73.1L292.6 86.3L295.0 90.9L297.5 90.7L300.0 103.0L302.5 123.3L304.9 138.6L307.4 152.0L309.9 159.1L312.4 157.4L314.9 147.4L317.3 128.7L319.8 109.5L322.3 93.3L324.8 81.4L327.3 72.6L329.7 64.3L332.2 61.0L334.7 60.7L337.2 61.4L339.7 69.1L342.1 73.3L344.6 73.9L347.1 73.9L349.6 82.4L352.0 95.0L354.5 99.2L357.0 95.6L359.5 107.2L362.0 127.3L364.4 148.2L366.9 162.6L369.4 171.4L371.9 173.5L374.4 173.5L376.8 166.1L379.3 154.5L381.8 137.0L384.3 122.3L386.8 111.8L389.2 100.3L391.7 94.3L394.2 97.0L396.7 97.0L399.1 104.0L401.6 107.0L404.1 106.1L406.6 104.9L409.1 109.8L411.5 120.2L414.0 119.8L416.5 114.5L419.0 123.7L421.5 142.6L423.9 158.0L426.4 171.5L428.9 180.9L431.4 185.0L433.9 187.1L436.3 183.8L438.8 175.8L441.3 159.6L443.8 140.6L446.3 125.0L448.7 111.5L451.2 105.5L453.7 109.1L456.2 108.5L458.6 114.2L461.1 116.7L463.6 112.7L466.1 106.5L468.6 106.0L471.0 113.6L473.5 112.9L476.0 112.1L476.0 132.6L473.5 134.8L471.0 131.7L468.6 124.2L466.1 124.6L463.6 130.4L461.1 133.6L458.6 130.9L456.2 124.3L453.7 124.1L451.2 120.0L448.7 125.1L446.3 138.1L443.8 153.3L441.3 172.2L438.8 187.4L436.3 195.1L433.9 198.2L431.4 195.7L428.9 191.4L426.4 182.3L423.9 168.5L421.5 165.0L419.0 146.3L416.5 136.6L414.0 142.4L411.5 142.4L409.1 132.3L406.6 127.3L404.1 128.0L401.6 128.0L399.1 124.4L396.7 116.7L394.2 115.6L391.7 112.3L389.2 117.2L386.8 127.9L384.3 137.9L381.8 152.3L379.3 168.7L376.8 179.8L374.4 186.3L371.9 185.5L369.4 183.3L366.9 174.5L364.4 160.1L362.0 149.3L359.5 129.2L357.0 117.5L354.5 121.5L352.0 115.2L349.6 103.2L347.1 94.5L344.6 93.8L342.1 92.4L339.7 87.3L337.2 78.8L334.7 77.0L332.2 76.4L329.7 79.0L327.3 86.7L324.8 95.3L322.3 106.5L319.8 122.1L317.3 141.5L314.9 159.3L312.4 168.4L309.9 169.8L307.4 163.0L304.9 149.6L302.5 145.4L300.0 125.0L297.5 112.6L295.0 113.8L292.6 108.2L290.1 95.5L287.6 87.1L285.1 87.8L282.6 87.3L280.2 82.2L277.7 75.1L275.2 74.4L272.7 74.3L270.2 77.8L267.8 86.9L265.3 95.7L262.8 107.5L260.3 124.2L257.8 143.1L255.4 160.4L252.9 169.4L250.4 170.5L247.9 164.1L245.4 150.6L243.0 149.5L240.5 130.3L238.0 119.2L235.5 121.6L233.1 113.8L230.6 100.3L228.1 92.5L225.6 94.9L223.1 94.3L220.7 89.2L218.2 82.2L215.7 81.6L213.2 81.1L210.7 84.6L208.3 92.9L205.8 100.9L203.3 112.5L200.8 129.8L198.3 148.7L195.9 166.1L193.4 175.8L190.9 177.2L188.4 170.6L186.0 156.9L183.5 153.5L181.0 135.1L178.5 124.3L176.0 126.0L173.6 120.2L171.1 106.1L168.6 99.0L166.1 101.9L163.6 102.2L161.2 96.8L158.7 89.1L156.2 88.1L153.7 87.2L151.2 88.9L148.8 96.4L146.3 103.0L143.8 112.6L141.3 127.9L138.9 147.8L136.4 168.1L133.9 179.6L131.4 180.4L128.9 174.2L126.5 160.9L124.0 165.8L121.5 148.4L119.0 137.7L116.5 139.4L114.1 133.1L111.6 117.7L109.1 110.0L106.6 116.4L104.1 117.7L101.7 111.9L99.2 103.7L96.7 103.3L94.2 101.4L91.7 103.7L89.3 111.1L86.8 117.5L84.3 126.7L81.8 141.7L79.4 161.3L76.9 183.0L74.4 197.9L71.9 201.4L69.4 194.8L67.0 180.2L64.5 180.4L62.0 163.7Z" fill="var(--accent)"/>
+              <path class="fade rte" d="M62.0 152.5L64.5 166.0L67.0 175.3L69.4 186.3L71.9 188.9L74.4 183.7L76.9 169.1L79.4 148.6L81.8 131.4L84.3 118.9L86.8 108.7L89.3 104.4L91.7 98.3L94.2 94.3L96.7 88.4L99.2 89.3L101.7 93.3L104.1 93.4L106.6 86.8L109.1 86.7L111.6 101.5L114.1 112.3L116.5 113.8L119.0 114.0L121.5 134.1L124.0 149.1L126.5 157.8L128.9 169.2L131.4 174.5L133.9 168.6L136.4 153.8L138.9 134.7L141.3 117.6L143.8 103.7L146.3 96.1L148.8 89.4L151.2 83.8L153.7 82.5L156.2 79.8L158.7 81.8L161.2 86.2L163.6 86.2L166.1 79.8L168.6 77.3L171.1 91.9L173.6 105.9L176.0 107.0L178.5 106.2L181.0 120.9L183.5 134.3L186.0 148.6L188.4 163.8L190.9 168.4L193.4 160.6L195.9 147.6L198.3 127.1L200.8 113.4L203.3 98.5L205.8 90.0L208.3 84.1L210.7 76.8L213.2 77.6L215.7 74.4L218.2 79.4L220.7 86.6L223.1 86.6L225.6 79.3L228.1 75.9L230.6 87.3L233.1 97.9L235.5 98.5L238.0 99.5L240.5 119.1L243.0 137.1L245.4 150.7L247.9 164.3L250.4 168.7L252.9 163.5L255.4 149.6L257.8 131.6L260.3 113.0L262.8 97.5L265.3 90.4L267.8 82.8L270.2 78.5L272.7 79.0L275.2 75.4L277.7 79.4L280.2 82.8L282.6 81.8L285.1 77.9L287.6 78.6L290.1 87.7L292.6 98.9L295.0 97.1L297.5 97.5L300.0 119.9L302.5 135.1L304.9 147.6L307.4 160.6L309.9 165.0L312.4 160.0L314.9 146.0L317.3 125.8L319.8 111.8L322.3 100.3L324.8 91.7L327.3 87.5L329.7 83.5L332.2 83.0L334.7 80.3L337.2 87.5L339.7 94.4L342.1 94.6L344.6 91.3L347.1 90.8L349.6 101.4L352.0 109.8L354.5 108.7L357.0 105.2L359.5 126.8L362.0 141.1L364.4 155.7L366.9 171.8L369.4 179.9L371.9 179.9L374.4 177.5L376.8 171.3L379.3 161.4L381.8 147.9L384.3 137.3L386.8 128.7L389.2 116.4L391.7 118.1L394.2 117.8L396.7 121.6L399.1 129.3L401.6 129.5L404.1 122.2L406.6 118.2L409.1 125.9L411.5 134.0L414.0 128.6L416.5 124.8L419.0 146.9L421.5 160.0L423.9 170.7L426.4 183.9L428.9 191.6L431.4 195.0L433.9 197.9L436.3 193.8L438.8 184.5L441.3 171.2L443.8 157.3L446.3 146.2L448.7 134.9L451.2 136.8L453.7 137.8L456.2 143.3L458.6 153.2L461.1 151.8L463.6 142.1L466.1 131.0L468.6 132.7L471.0 137.2L473.5 134.3L476.0 133.1" fill="none" stroke="var(--chart-rte)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path class="draw" pathLength="1" d="M62.0 141.0L64.5 160.6L67.0 171.5L69.4 183.6L71.9 189.9L74.4 185.5L76.9 172.2L79.4 151.9L81.8 130.9L84.3 110.8L86.8 97.9L89.3 88.4L91.7 79.4L94.2 75.4L96.7 75.2L99.2 74.5L101.7 83.8L104.1 88.5L106.6 88.4L109.1 84.1L111.6 90.6L114.1 102.6L116.5 104.8L119.0 103.2L121.5 118.6L124.0 140.1L126.5 151.9L128.9 166.6L131.4 172.8L133.9 171.0L136.4 159.6L138.9 140.9L141.3 121.2L143.8 102.9L146.3 91.7L148.8 83.7L151.2 75.3L153.7 71.3L156.2 71.2L158.7 72.3L161.2 80.4L163.6 83.9L166.1 82.4L168.6 79.8L171.1 85.8L173.6 97.7L176.0 102.4L178.5 99.8L181.0 116.2L183.5 138.0L186.0 148.9L188.4 162.4L190.9 169.0L193.4 167.1L195.9 156.7L198.3 139.4L200.8 120.0L203.3 101.7L205.8 88.8L208.3 78.9L210.7 69.2L213.2 65.4L215.7 65.9L218.2 67.5L220.7 75.1L223.1 79.5L225.6 79.8L228.1 77.1L230.6 82.7L233.1 93.8L235.5 97.1L238.0 96.7L240.5 113.4L243.0 133.3L245.4 142.6L247.9 157.0L250.4 163.8L252.9 162.2L255.4 151.6L257.8 133.0L260.3 114.1L262.8 97.7L265.3 84.8L267.8 74.7L270.2 66.8L272.7 64.1L275.2 64.5L277.7 65.9L280.2 74.4L282.6 78.3L285.1 77.7L287.6 76.2L290.1 84.2L292.6 95.7L295.0 98.6L297.5 97.2L300.0 112.0L302.5 132.5L304.9 143.7L307.4 157.3L309.9 162.5L312.4 161.2L314.9 151.3L317.3 134.0L319.8 116.5L322.3 100.5L324.8 88.8L327.3 79.3L329.7 73.4L332.2 70.8L334.7 72.4L337.2 74.2L339.7 81.1L342.1 85.2L344.6 85.0L347.1 85.6L349.6 93.2L352.0 104.4L354.5 109.4L357.0 108.1L359.5 121.8L362.0 142.9L364.4 154.9L366.9 169.1L369.4 177.0L371.9 180.8L374.4 181.0L376.8 176.2L379.3 166.2L381.8 148.9L384.3 133.5L386.8 121.1L389.2 109.1L391.7 102.7L394.2 104.6L396.7 105.3L399.1 113.1L401.6 116.1L404.1 115.4L406.6 114.5L409.1 119.1L411.5 127.5L414.0 130.5L416.5 128.4L419.0 140.1L421.5 158.8L423.9 167.5L426.4 181.8L428.9 190.2L431.4 193.5L433.9 196.0L436.3 193.7L438.8 186.7L441.3 171.9L443.8 157.5L446.3 144.7L448.7 134.8L451.2 128.0L453.7 131.0L456.2 130.6L458.6 138.0L461.1 138.8L463.6 136.5L466.1 129.0L468.6 129.7L471.0 137.5L473.5 140.0L476.0 136.0" fill="none" stroke="var(--chart-actual)" stroke-width="1.6" stroke-linejoin="round"/>
+              <path class="draw med" pathLength="1" d="M62.0 152.9L64.5 169.2L67.0 173.1L69.4 188.1L71.9 194.6L74.4 190.8L76.9 175.0L79.4 152.3L81.8 132.0L84.3 116.4L86.8 106.7L89.3 100.2L91.7 92.4L94.2 89.5L96.7 90.8L99.2 91.0L101.7 99.0L104.1 104.9L106.6 103.4L109.1 96.7L111.6 104.4L114.1 120.4L116.5 123.8L119.0 122.8L121.5 133.6L124.0 151.4L126.5 154.2L128.9 167.5L131.4 173.7L133.9 172.7L136.4 160.9L138.9 140.2L141.3 120.1L143.8 104.3L146.3 94.3L148.8 87.1L151.2 78.9L153.7 76.4L156.2 77.0L158.7 77.2L161.2 84.7L163.6 90.1L166.1 89.4L168.6 85.9L171.1 93.4L173.6 108.2L176.0 113.4L178.5 112.5L181.0 123.5L183.5 141.3L186.0 150.8L188.4 164.5L190.9 171.0L193.4 169.4L195.9 159.5L198.3 141.7L200.8 122.8L203.3 105.3L205.8 93.2L208.3 84.8L210.7 75.9L213.2 71.7L215.7 71.4L218.2 71.3L220.7 77.8L223.1 82.6L225.6 83.0L228.1 80.0L230.6 87.9L233.1 102.0L235.5 108.6L238.0 107.3L240.5 118.4L243.0 137.3L245.4 144.9L247.9 158.6L250.4 164.8L252.9 163.5L255.4 154.3L257.8 136.6L260.3 117.7L262.8 100.9L265.3 88.6L267.8 79.4L270.2 69.8L272.7 65.7L275.2 65.0L277.7 65.1L280.2 71.8L282.6 76.4L285.1 76.5L287.6 75.3L290.1 83.6L292.6 96.9L295.0 101.9L297.5 101.5L300.0 113.8L302.5 133.9L304.9 144.0L307.4 157.4L309.9 164.2L312.4 162.5L314.9 153.0L317.3 134.8L319.8 115.4L322.3 99.5L324.8 87.9L327.3 79.2L329.7 71.2L332.2 67.9L334.7 68.1L337.2 69.2L339.7 77.4L342.1 82.1L344.6 83.2L347.1 83.4L349.6 92.0L352.0 104.5L354.5 110.0L357.0 106.5L359.5 118.3L362.0 138.1L364.4 153.9L366.9 168.1L369.4 176.8L371.9 178.8L374.4 179.2L376.8 172.5L379.3 161.0L381.8 144.1L384.3 129.7L386.8 119.5L389.2 108.3L391.7 102.5L394.2 105.8L396.7 106.2L399.1 113.7L401.6 117.0L404.1 116.9L406.6 115.9L409.1 120.8L411.5 131.1L414.0 130.7L416.5 125.6L419.0 135.2L421.5 153.6L423.9 163.3L426.4 176.7L428.9 185.9L431.4 190.0L433.9 192.4L436.3 189.3L438.8 181.3L441.3 165.6L443.8 146.8L446.3 131.7L448.7 118.3L451.2 112.5L453.7 116.7L456.2 116.3L458.6 122.4L461.1 125.0L463.6 121.6L466.1 115.5L468.6 115.0L471.0 122.7L473.5 123.6L476.0 122.4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
+            </svg>
+            <ul class="legend" aria-hidden="true">
+              <li><span class="sw" style="background:var(--chart-actual)"></span>Actual</li>
+              <li><span class="sw" style="background:var(--accent);height:3px"></span>Timestral median</li>
+              <li><span class="sw band"></span>10–90% band</li>
+              <li><span class="sw" style="background:repeating-linear-gradient(90deg,var(--chart-rte) 0 4px,transparent 4px 7px)"></span>RTE day-ahead (J-1)</li>
+            </ul>
+          </div>
         </a>
         <a class="paper tile rv" style="--d:.06s" href="https://github.com/qudotcom/tourism-ai">
           <div class="tile-top"><span class="tag">LLM · RAG</span><span class="go" aria-hidden="true">→</span></div>
@@ -602,7 +692,7 @@
               <linearGradient id="hill-line" x1="0" x2="1"><stop offset="0" stop-color="var(--chair)" stop-opacity="0"/><stop offset=".15" stop-color="var(--chair)" stop-opacity=".7"/><stop offset=".85" stop-color="var(--chair)" stop-opacity=".7"/><stop offset="1" stop-color="var(--chair)" stop-opacity="0"/></linearGradient>
               <linearGradient id="mug-white" x1="0" x2="1"><stop offset="0" stop-color="#D6CFC2"/><stop offset=".22" stop-color="#F5F1E9"/><stop offset=".6" stop-color="#FDFBF7"/><stop offset="1" stop-color="#D0C9BC"/></linearGradient>
               <linearGradient id="mug-curve" x1="0" x2="1"><stop offset="0" stop-color="#20180F" stop-opacity=".3"/><stop offset=".25" stop-color="#20180F" stop-opacity="0"/><stop offset=".75" stop-color="#20180F" stop-opacity="0"/><stop offset="1" stop-color="#20180F" stop-opacity=".34"/></linearGradient>
-              <clipPath id="mug-clip"><path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z"/></clipPath>
+              <clipPath id="mug-clip"><path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z"/></clipPath>
               <radialGradient id="moon-face" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="var(--moon-lit)"/><stop offset="1" stop-color="var(--moon)"/></radialGradient>
             </defs>
 
@@ -681,54 +771,13 @@
               <g id="m-fore" transform="rotate(0 149 190)">
                 <path d="M149 190 L177.2 164.6" stroke="var(--figure)" stroke-width="9.5" stroke-linecap="round" fill="none"/>
                 <g id="m-mug" transform="rotate(0 177.2 164.6)">
-                  <!-- his own mug: white outside, black inside and a black handle, printed with
-                       torn kraft papers, dried flowers, a photo in a doorway and a little note -->
+                  <!-- his own mug: white outside, black inside and a black handle; its printed front is a photograph of the real one -->
                   <ellipse cx="175.4" cy="161.6" rx="3.3" ry="4.4" fill="var(--figure)"/>
                   <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" stroke="#16181C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                   <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" transform="translate(187.6 159.5) scale(1.13) translate(-187.6 -159.5)" pathLength="1" stroke-dasharray=".6 1" stroke="#8A929D" stroke-width=".44" fill="none" stroke-linecap="round"/>
-                  <path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z" fill="url(#mug-white)"/>
-                  <g clip-path="url(#mug-clip)">
-                    <rect x="175" y="153.3" width="11.6" height="12" fill="#E8DABF"/>
-                    <path d="M175 153.3 L177.6 153.3 L177.2 155.6 L177.8 158 L177.1 160.6 L177.7 163 L177.3 165.3 L175 165.3 Z" fill="#D1B993"/>
-                    <path d="M178 153.8 L186.6 153.9 L186.6 165.3 L177.9 165.3 L178.3 162.4 L177.8 159.2 Z" fill="#F1E8D6"/>
-                    <path d="M175.9 165.2 Q176.6 160.4 178.3 155.8 M176.4 165.3 Q177.3 161.8 178.9 159.4" stroke="#A88A5C" stroke-width=".2" fill="none"/>
-                    <g fill="#C5A877"><circle cx="178.2" cy="156.1" r=".22"/><circle cx="177.8" cy="157.3" r=".2"/><circle cx="177.4" cy="158.6" r=".22"/><circle cx="178.7" cy="159.6" r=".2"/><circle cx="178.2" cy="160.5" r=".18"/><circle cx="177" cy="160" r=".18"/></g>
-                    <g transform="rotate(-2.5 182 158)">
-                      <rect x="178.4" y="154.1" width="7.2" height="7.3" fill="#FAF6EE"/>
-                      <rect x="178.9" y="154.6" width="6.2" height="5.3" fill="#7A4426"/>
-                      <rect x="178.9" y="154.6" width="6.2" height="1.2" fill="#C49A70"/>
-                      <path d="M179.9 154.6 V155.8 M181 154.6 V155.8 M182.1 154.6 V155.8 M183.2 154.6 V155.8 M184.2 154.6 V155.8 M178.9 155.2 H185.1" stroke="#8B5A36" stroke-width=".14"/>
-                      <rect x="178.9" y="155.8" width=".7" height="4.1" fill="#5B2E1A"/>
-                      <rect x="184.4" y="155.8" width=".7" height="4.1" fill="#8A3F22"/>
-                      <rect x="179.6" y="155.8" width="4.8" height="4.1" fill="#A56B47"/>
-                      <rect x="182.2" y="156.1" width="1.2" height="1.1" fill="#E3C9A6"/>
-                      <path d="M179.2 159.9 L179.4 158.2 Q180.55 157.5 181.8 158.1 L182.1 159.9 Z" fill="#3F3A33"/>
-                      <circle cx="180.6" cy="157.15" r=".68" fill="#DFB295"/>
-                      <path d="M179.9 157.05 Q180 156.2 180.65 156.3 Q181.4 156.3 181.3 157 Q180.75 156.6 179.9 157.05 Z" fill="#2A211B"/>
-                      <path d="M181.6 159.9 L181.8 158.5 Q182.95 157.9 184.2 158.4 L184.5 159.9 Z" fill="#EEE5D6"/>
-                      <rect x="182.25" y="158.1" width="1.4" height=".48" rx=".22" fill="#2E2723"/>
-                      <circle cx="182.95" cy="157.55" r=".63" fill="#ECC4AA"/>
-                      <path d="M182.28 157.65 Q182.2 156.7 182.95 156.75 Q183.7 156.7 183.62 157.65 Q183.45 157.15 182.95 157.1 Q182.45 157.15 182.28 157.65 Z" fill="#3B2A20"/>
-                      <path d="M182.72 159.05 L182.78 158.62 L183 158.86 Q183.15 158.8 183.3 158.86 L183.52 158.62 L183.58 159.05 Q183.62 159.52 183.15 159.58 Q182.68 159.52 182.72 159.05 Z" fill="#1E1A17"/>
-                    </g>
-                    <rect x="181" y="153.5" width="2.3" height=".8" fill="#E3D5B8" opacity=".9" transform="rotate(-9 182.1 153.9)"/>
-                    <g transform="rotate(1.5 182.5 163.1)">
-                      <rect x="179" y="161.25" width="7" height="3.8" fill="#F6EFE0"/>
-                      <g stroke="#6E5C4A" stroke-width=".17" fill="none" stroke-linecap="round">
-                        <path d="M179.8 162.05 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
-                        <path d="M179.6 162.75 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
-                        <path d="M180.4 163.45 H182.1 M183.3 163.45 H185"/>
-                        <path d="M180 164.15 q.25 -.3 .5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0 t.5 0"/>
-                        <path d="M181.4 164.75 q.25 -.3 .5 0 t.5 0 t.5 0"/>
-                      </g>
-                      <path d="M184.1 161.95 c0 -.3 .45 -.3 .45 0 c0 -.3 .45 -.3 .45 0 c0 .3 -.45 .5 -.45 .6 c0 -.1 -.45 -.3 -.45 -.6 Z" fill="#C24B44"/>
-                      <path d="M182.4 163.35 c0 -.25 .35 -.25 .35 0 c0 -.25 .35 -.25 .35 0 c0 .25 -.35 .4 -.35 .5 c0 -.1 -.35 -.25 -.35 -.5 Z" stroke="#6E5C4A" stroke-width=".14" fill="none"/>
-                      <path d="M183.1 164.65 c0 -.22 .3 -.22 .3 0 c0 -.22 .3 -.22 .3 0 c0 .22 -.3 .36 -.3 .44 c0 -.08 -.3 -.22 -.3 -.44 Z" stroke="#6E5C4A" stroke-width=".13" fill="none"/>
-                    </g>
-                    <path d="M175.7 164.2 c0 -.35 .5 -.35 .5 0 c0 -.35 .5 -.35 .5 0 c0 .35 -.5 .6 -.5 .7 c0 -.1 -.5 -.35 -.5 -.7 Z" stroke="#B0956F" stroke-width=".16" fill="none"/>
-                  </g>
-                  <path d="M175.2 152.4 V165.9 A6.5 1 0 0 0 188.2 165.9 V152.4 Z" fill="url(#mug-curve)"/>
-                  <rect x="177.3" y="153.7" width=".6" height="11.4" rx=".3" fill="#fff" opacity=".3"/>
+                  <path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z" fill="url(#mug-white)"/>
+                  <image href="mug.jpg" x="175.2" y="152.3" width="13" height="15.6" preserveAspectRatio="none" clip-path="url(#mug-clip)"/>
+                  <path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z" fill="url(#mug-curve)"/>
                   <ellipse cx="181.7" cy="152.4" rx="6.5" ry="1.05" fill="#1C1D21"/>
                   <ellipse cx="181.7" cy="152.58" rx="5.7" ry=".66" fill="#070708"/>
                   <path d="M174.5 158.9 Q176.7 156.3 178.8 155.5" stroke="var(--figure)" stroke-width="2.7" stroke-linecap="round" fill="none"/>
@@ -813,7 +862,7 @@
     items.forEach(function (el) { io.observe(el); });
   } else { items.forEach(function (el) { el.classList.add("in"); }); }
 
-  /* the hero chart is drawn in the page; this only plays its entrance once it is on screen */
+  /* the Timestral chart is drawn in the page; this only plays its entrance once it is on screen */
   var chart = document.getElementById("chart");
   if ("IntersectionObserver" in window && !reduce) {
     var co = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { chart.classList.add("on"); co.disconnect(); } }, { threshold: .3 });

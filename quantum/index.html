@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Abdelouahed Tahri: Engineering &amp; Optimization (SAT and Constraint Solving, Scientific Python, Quantum), Paris</title>
+<meta name="description" content="Abdelouahed Tahri, engineering student and MSc AI candidate at CentraleSupélec in Paris: combinatorial optimization with SAT and constraint solvers, reproducible benchmarking under noise, scientific Python, mathematics and physics; former president of the Centrale Quanta club, looking to work on fault-tolerant quantum compilation.">
+<meta name="keywords" content="Abdelouahed Tahri, quantum computing, quantum compilation, SAT, constraint programming, OR-Tools, CP-SAT, combinatorial optimization, scheduling, benchmarking, scientific Python, physics, CentraleSupélec, Paris, internship">
+<meta name="author" content="Abdelouahed Tahri">
+<meta name="theme-color" content="#0D1015">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://qudotcom.github.io/quantum/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Abdelouahed Tahri: Engineering &amp; Optimization">
+<meta property="og:description" content="SAT and constraint solving, reproducible benchmarking under noise, scientific Python and physics. Seeking an R&amp;D internship from May 2027.">
+<meta property="og:url" content="https://qudotcom.github.io/quantum/">
+<meta property="og:site_name" content="Abdelouahed Tahri">
+<meta property="og:locale" content="en_US">
+<meta property="profile:first_name" content="Abdelouahed">
+<meta property="profile:last_name" content="Tahri">
+<meta property="og:image" content="https://qudotcom.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Abdelouahed Tahri, machine learning engineer: builds models, then tries to break them.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://qudotcom.github.io/og.png">
+<meta name="twitter:image:alt" content="Abdelouahed Tahri, machine learning engineer: builds models, then tries to break them.">
+<meta name="twitter:title" content="Abdelouahed Tahri: Engineering &amp; Optimization">
+<meta name="twitter:description" content="SAT and constraint solving, benchmarking under noise, scientific Python and physics. MSc AI, CentraleSupélec.">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='.5' y='.5' width='63' height='63' rx='14.5' fill='%231A2029' stroke='%23fff' stroke-opacity='.08'/><g class='mark-moon'><circle cx='46' cy='16' r='7.5' fill='%23E2B540'/><circle cx='49.6' cy='13' r='6.3' fill='%231A2029'/></g><path d='M36.5 48.5 L45 36 L54 48.5' fill='none' stroke='%2397ACC8' stroke-opacity='.5' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/><path d='M10 48.5 L26.5 20.5 L43 48.5 M16 38.3 L37 38.3' fill='none' stroke='%23F2E7D2' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Tinos:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  /* ---------- tokens: a night palette with Sanzo Wada accents (Yellow Ocher, Salvia Blue, sage) ---------- */
+  :root {
+    --page: #0D1015; --paper: #161B22; --paper-sunk: #12161C;
+    --ink: #F3F4F6; --ink-2: #D1D5DB; --muted: #9CA3AF;
+    --line: rgba(255,255,255,.10); --line-2: rgba(255,255,255,.20);
+    --accent: #E2B540; --accent-glow: #E2B540; --leaf: #A9BB8A;
+    --chart-actual: #F3F4F6; --chart-rte: #9CA3AF;
+    --shadow-up: 0 18px 40px -20px rgba(0,0,0,.7);
+    --salvia: #97ACC8; --sage: #8FA071;
+    --display: "Tinos", "Times New Roman", Times, Georgia, serif;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Inter", -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  /* the large viewport height, so the sky does not jump when a phone's address bar slides */
+  #bg, #sky { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
+  #bg { z-index: -1; }
+  #sky { z-index: -2; opacity: 0; transition: opacity 2.8s ease-out; will-change: transform; }
+  #sky.on { opacity: 1; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--page); }
+  body { margin: 0; color: var(--ink); background: transparent;
+    font: 400 17px/1.65 var(--serif); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  a { color: inherit; }
+  .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 720px) { .wrap { padding: 0 32px; } }
+
+  /* cards: flat and outlined */
+  .paper { position: relative; border-radius: 20px; background: var(--paper); border: 1px solid var(--line); }
+
+  /* the hand-drawn line from the onboarding slides */
+  .mark { position: relative; display: inline-block; color: var(--accent); }
+  .mark::after { content: ""; position: absolute; left: 0; right: 0; bottom: .02em; height: 1px; background: currentColor; opacity: .8;
+    transform: rotate(-.3deg) scaleX(.95); transform-origin: left; }
+  .js .mark::after { transform: rotate(-.3deg) scaleX(0); transition: transform 1.1s cubic-bezier(.2,.7,.2,1) .35s; }
+  .js .in .mark::after, .js .mark.in::after, .js .hero .mark::after { transform: rotate(-.3deg) scaleX(.95); }
+
+  .label { font: 500 .74rem/1.2 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---------- nav ---------- */
+  .nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--page) 84%, transparent);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .3s; }
+  .nav.scrolled { border-bottom-color: var(--line); }
+  .nav .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
+  /* the mark: an "A" for a summit, and a crescent moon above it */
+  .logo-mark { display: block; flex: none; }
+  .logo-mark .mark-moon { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; color: inherit; border-radius: 12px; }
+  .logo { display: block; width: 38px; height: 38px; flex: none; border-radius: 11px; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+  .logo .logo-mark { width: 100%; height: 100%; }
+  .brand:hover .logo { transform: rotate(-4deg) scale(1.04); }
+  .brand:hover .logo-mark .mark-moon { transform: translate(1px, -3px); }
+  .nav-name { font: 400 1.12rem/1 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nav-links { display: flex; gap: 2px; list-style: none; padding: 0; margin: 0 0 0 auto; }
+  .nav-links a { display: block; padding: 8px 12px; border-radius: 999px; text-decoration: none; color: var(--ink-2); font: 500 .9rem/1 var(--sans); transition: background .2s, color .2s; }
+  .nav-links a:hover { background: var(--paper-sunk); color: var(--ink); }
+  .icon-btn { width: 38px; height: 38px; flex: none; padding: 0; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: background .2s; }
+  .icon-btn:hover { background: var(--paper-sunk); }
+  .icon-btn svg { width: 17px; height: 17px; }
+  .menu-btn, .menu-btn .i-close { display: none; }
+  @media (max-width: 759px) {
+    .menu-btn { display: grid; margin-left: auto; }
+    .nav.open .menu-btn .i-menu { display: none; }
+    .nav.open .menu-btn .i-close { display: block; }
+    .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; margin: 0; padding: 8px 16px 14px; flex-direction: column; gap: 2px;
+      background: var(--page); border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -24px rgba(0,0,0,.35); }
+    .nav.open .nav-links { display: flex; }
+    .nav.open { border-bottom-color: var(--line); }
+    .nav-links a { padding: 13px 10px; border-radius: 12px; font-size: 1rem; }
+  }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 40; padding: 10px 16px; border-radius: 10px; background: var(--ink); color: var(--page);
+    font: 500 .9rem/1 var(--sans); text-decoration: none; transition: top .2s; }
+  .skip:focus, .skip:focus-visible { top: 12px; }
+  main:focus { outline: none; }
+
+  /* ---------- hero ---------- */
+  .hero { display: grid; gap: 44px; padding: 64px 0 24px; }
+  @media (min-width: 1080px) { .hero { grid-template-columns: 1.08fr .92fr; align-items: center; padding: 96px 0 48px; } }
+  h1 { margin: 18px 0 0; font: 400 clamp(2.9rem, 8.4vw, 5.2rem)/1.0 var(--display); letter-spacing: -.02em; }
+  h1 .sub { display: block; margin-top: .3em; font: italic 400 .5em/1.2 var(--display); letter-spacing: 0; color: var(--ink-2); }
+  .lede { margin: 26px 0 0; max-width: 34rem; font-size: 1.1rem; color: var(--ink-2); }
+  .lede b { color: var(--ink); font-weight: 600; }
+  .status { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 9px 16px 9px 13px; border-radius: 999px;
+    background: color-mix(in srgb, var(--sage) 18%, transparent); color: var(--ink); font: 500 .88rem/1.35 var(--sans); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf); flex: none; animation: breathe 3.2s ease-in-out infinite; }
+  @keyframes breathe { 50% { opacity: .35; } }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; text-decoration: none;
+    font: 500 .95rem/1 var(--sans); border: 1px solid var(--line-2); transition: transform .25s, background .25s, box-shadow .25s; }
+  .btn:hover { transform: translateY(-1px); background: var(--paper-sunk); }
+  .btn.primary { background: var(--ink); color: var(--page); border-color: var(--ink); }
+  .btn.primary:hover { background: var(--ink); box-shadow: var(--shadow-up); }
+  .btn svg { width: 15px; height: 15px; }
+  .socials { display: flex; flex-wrap: wrap; gap: 20px; margin: 24px 0 0; padding: 0; list-style: none; }
+  .socials a { display: inline-block; font: italic 400 1.02rem/1 var(--display); color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line-2); padding: 10px 0 3px; transition: color .2s, border-color .2s; }
+  .socials a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* the Timestral chart, inside its project tile */
+  .chart-title { display: block; font: 400 1.3rem/1.2 var(--display); color: var(--ink); }
+  .chart-sub { display: block; margin-top: 2px; font: italic 400 .98rem/1.4 var(--display); color: var(--muted); }
+  .chart-svg { display: block; width: 100%; height: auto; margin-top: 14px; overflow: visible; }
+  .chart-svg text { font: 500 14px var(--sans); fill: var(--muted); }
+  .chart-svg .band { opacity: .2; }
+  .chart-svg .rte { opacity: .95; }
+  .chart-svg .draw { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 2.2s cubic-bezier(.45,.05,.2,1); }
+  .chart-svg .draw.med { transition-delay: .25s; }
+  .chart-svg .fade { transition: opacity 1.2s ease .9s; }
+  .chart-svg .fade.rte { transition-delay: 1.4s; }
+  .js .chart-svg:not(.on) .draw { stroke-dashoffset: 1; }
+  .js .chart-svg:not(.on) .fade { opacity: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0 0; padding: 0; list-style: none; font: 400 .8rem/1.4 var(--sans); color: var(--ink-2); }
+  .legend li { display: flex; align-items: center; gap: 7px; }
+  .sw { width: 16px; height: 2px; border-radius: 2px; flex: none; }
+  .sw.band { height: 10px; border-radius: 3px; background: color-mix(in srgb, var(--accent) 24%, transparent); }
+
+  /* the hero drawing: the man from the contact scene, closer, his own mug in his hands, under the fields he has worked in */
+  .hero-scene { margin: 0; }
+  .hero-scene svg { display: block; width: 100%; max-width: 500px; height: auto; margin-left: auto; overflow: visible; }
+  .hero-scene figcaption { margin: 4px 0 0 auto; max-width: 27rem; text-align: right; font: italic 400 clamp(1.15rem, 2.3vw, 1.45rem)/1.35 var(--display); color: var(--ink-2); }
+  .hero-scene figcaption em { color: var(--accent); }
+  .hero-scene .hs-fields text { font: 500 11.5px var(--sans); letter-spacing: .12em; text-transform: uppercase; fill: var(--muted); }
+  @media (max-width: 600px) { .hero-scene .hs-fields text { font-size: 13px; letter-spacing: .08em; } }
+  .hero-scene .hs-path { stroke-dasharray: 1; animation: hs-trace 3.4s linear .5s both; }
+  @keyframes hs-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .hero-scene .hs-star { transform-box: fill-box; transform-origin: center; animation: hs-lit .7s ease-out var(--t) both, hs-glint 5s ease-in-out calc(var(--t) + 1.5s) infinite; }
+  .hero-scene .hs-star:nth-of-type(2n) { animation-duration: .7s, 6.5s; }
+  @keyframes hs-lit { from { opacity: 0; transform: scale(.3); } }
+  @keyframes hs-glint { 50% { opacity: .6; } }
+  .hero-scene .hs-fields text { animation: hs-name .9s ease var(--t) both; }
+  @keyframes hs-name { from { opacity: 0; } }
+  .hero-scene .steam path { animation: steam 3.4s ease-out infinite; opacity: 0; }
+  .hero-scene .steam path:last-child { animation-delay: 1.7s; }
+  @media (max-width: 1079px) { .hero-scene svg { margin: 0 auto; } .hero-scene figcaption { margin: 4px auto 0; text-align: center; } }
+  @media (prefers-reduced-motion: reduce) { .hero-scene * { animation: none !important; } .hero-scene .steam path { opacity: .5; } }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-top: 32px; border-top: 1px solid var(--line); }
+  @media (min-width: 820px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat { padding: 26px 18px 24px 0; border-bottom: 1px solid var(--line); }
+  .stat:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--line); }
+  @media (min-width: 820px) { .stat { border-bottom: 0; } .stat + .stat { padding-left: 18px; border-left: 1px solid var(--line); } }
+  .stat b { display: block; font: 400 clamp(2.3rem, 5vw, 3.2rem)/1 var(--display); letter-spacing: -.01em; font-variant-numeric: lining-nums; }
+  .stat b i { color: var(--accent); }
+  .stat span { display: block; margin-top: 10px; font: 400 .86rem/1.45 var(--sans); color: var(--muted); max-width: 15rem; }
+
+  .now { display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap; margin: 28px 0 0; padding: 18px 22px; border-radius: 16px;
+    background: color-mix(in srgb, var(--sage) 14%, transparent); font: italic 400 1.12rem/1.5 var(--display); color: var(--ink-2); }
+  .now .label { font-style: normal; color: var(--leaf); }
+  .now span:last-child { flex: 1 1 26rem; }
+  .now b { font-weight: 400; color: var(--ink); }
+
+  /* sections */
+  section.block { padding: 104px 0 0; scroll-margin-top: 64px; }
+  .sec-head { margin-bottom: 36px; max-width: 44rem; }
+  .sec-num { font: italic 400 1.05rem/1 var(--display); color: var(--accent); }
+  h2 { margin: 10px 0 0; font: 400 clamp(2.2rem, 5.4vw, 3.4rem)/1.05 var(--display); letter-spacing: -.015em; }
+  h2 em { color: var(--muted); }
+
+  .focus { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .focus li { display: grid; grid-template-columns: 40px 1fr; gap: 4px 16px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 820px) { .focus li { grid-template-columns: 70px 300px 1fr; align-items: baseline; } }
+  .focus .n { font: italic 400 1rem/1.7 var(--display); color: var(--muted); }
+  .focus h3 { margin: 0; font: 400 1.5rem/1.25 var(--display); transition: color .25s; }
+  .focus li:hover h3 { color: var(--accent); }
+  .focus p { margin: 0; color: var(--ink-2); grid-column: 2; }
+  @media (min-width: 820px) { .focus p { grid-column: auto; } }
+
+  /* work */
+  .bento { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .bento { grid-template-columns: repeat(3, 1fr); } }
+  .tile { display: flex; flex-direction: column; padding: 26px; min-height: 240px; text-decoration: none; color: inherit; transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s; }
+  .tile:hover { transform: translateY(-3px); border-color: var(--line-2); box-shadow: var(--shadow-up); }
+  .tile:focus-visible { outline-offset: 4px; }
+  @media (min-width: 720px) { .tile.feature, .tile.more { grid-column: 1 / -1; } .tile.more { min-height: 0; } }
+  .feature-chart { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
+  @media (min-width: 1000px) {
+    .tile.feature { display: grid; grid-template-columns: 1fr 1.1fr; column-gap: 36px; }
+    .feature-text { display: flex; flex-direction: column; }
+    .feature-chart { margin: 0; padding: 0 0 0 36px; border: 0; border-left: 1px solid var(--line); }
+  }
+  .tile-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .tag { font: 500 .7rem/1.2 var(--sans); letter-spacing: .13em; text-transform: uppercase; color: var(--muted); }
+  .tag.hot { color: var(--accent); }
+  .go { font: italic 400 1.4rem/1 var(--display); color: var(--muted); transition: transform .35s cubic-bezier(.2,.7,.2,1), color .25s; }
+  .tile:hover .go { transform: translateX(4px); color: var(--accent); }
+  .tile h3 { margin: 18px 0 8px; font: 400 1.6rem/1.15 var(--display); }
+  .tile.feature h3 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); max-width: 32rem; }
+  .tile h3 i { color: var(--ink-2); }
+  .tile p { margin: 0; color: var(--ink-2); font-size: .98rem; }
+  .big { display: flex; gap: 28px; flex-wrap: wrap; margin: 20px 0 2px; }
+  .big b { display: block; font: 400 2rem/1 var(--display); font-variant-numeric: lining-nums; }
+  .big div:first-child b { color: var(--accent); }
+  .big span { font: 400 .78rem/1.4 var(--sans); color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 18px 0 0; list-style: none; }
+  .chips li { font: 500 .74rem/1 var(--sans); padding: 6px 10px; border-radius: 6px; background: var(--paper-sunk); color: var(--ink-2); }
+  .tile.more { background: transparent; border: 1px dashed var(--line-2); }
+  .tile.more:hover { box-shadow: none; background: color-mix(in srgb, var(--paper) 60%, transparent); }
+  .tile.more .handle { margin-top: auto; padding-top: 18px; font: italic 400 1.05rem/1 var(--display); color: var(--accent); }
+
+  /* research */
+  .research { display: grid; gap: 18px; }
+  @media (min-width: 900px) { .research { grid-template-columns: 1.3fr 1fr; } }
+  .research article { padding: 30px; }
+  .research h3 { margin: 14px 0 12px; font: italic 400 clamp(1.8rem, 3.4vw, 2.4rem)/1.1 var(--display); }
+  .research p { margin: 0; color: var(--ink-2); }
+  .research a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+  /* timeline */
+  .timeline { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .timeline li { display: grid; gap: 4px 24px; padding: 26px 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 820px) { .timeline li { grid-template-columns: 170px 1fr 1.2fr; } }
+  .when { font: italic 400 1rem/1.7 var(--display); color: var(--muted); }
+  .timeline h3 { margin: 0; font: 400 1.35rem/1.25 var(--display); }
+  .where { font: 500 .86rem/1.4 var(--sans); color: var(--accent); margin-top: 4px; }
+  .timeline p { margin: 0; color: var(--ink-2); }
+  .timeline b { color: var(--ink); font-weight: 600; }
+
+  /* education */
+  .edu { display: grid; gap: 18px; }
+  @media (min-width: 820px) { .edu { grid-template-columns: repeat(3, 1fr); } }
+  .edu .paper { padding: 24px; }
+  .edu h3 { margin: 6px 0 4px; font: 400 1.3rem/1.25 var(--display); }
+  .edu p { margin: 0; color: var(--ink-2); font-size: .95rem; }
+  .extras { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; padding: 0; list-style: none; }
+  .extras li { padding: 9px 15px; border-radius: 999px; background: var(--paper-sunk); font: 400 .88rem/1.35 var(--sans); color: var(--ink-2); }
+  .extras b { color: var(--ink); font-weight: 600; }
+
+  /* contact */
+  .contact { margin: 120px 0 0; padding: 64px 0 8px; border-top: 1px solid var(--line); scroll-margin-top: 64px; }
+  .contact-grid { display: grid; gap: 40px; align-items: end; }
+  @media (min-width: 900px) { .contact-grid { grid-template-columns: 1.15fr .85fr; } }
+  .moon-scene { margin: 0; --figure: #C9CED6; --figure-2: #8D95A2; --hair: #E5E8ED; --chair: #5F6775; --moon: #F0E4C3; --moon-lit: #FFFAEB; --moon-shade: #DDD0AB;
+    --skyline: #222A36; --cloud: rgba(13,16,21,.85); --steam: #E2D6B4; }
+  .moon-scene svg { display: block; width: 100%; max-width: 520px; height: auto; margin-left: auto; overflow: visible; }
+  .moon-scene figcaption { margin-top: 12px; text-align: right; font: italic 400 clamp(1.15rem, 2.4vw, 1.5rem)/1.3 var(--display); color: var(--ink-2); }
+  .moon-scene figcaption .mark { color: var(--accent); }
+  .moon-scene .steam path { animation: steam 3.2s ease-out infinite; opacity: 0; }
+  .moon-scene .steam path:last-child { animation-delay: 1.6s; }
+  @keyframes steam { 0% { opacity: 0; transform: translateY(4px); } 30% { opacity: .7; } 100% { opacity: 0; transform: translateY(-10px); } }
+  .moon-scene .moon-halo { transform-box: fill-box; transform-origin: center; animation: halo 6s ease-in-out infinite; }
+  @keyframes halo { 50% { transform: scale(1.07); opacity: .75; } }
+  .moon-scene .scene-stars circle { animation: blink 4s ease-in-out infinite; }
+  .moon-scene .scene-stars circle:nth-child(2n) { animation-delay: 1.3s; }
+  .moon-scene .scene-stars circle:nth-child(3n) { animation-delay: 2.6s; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .moon-scene .cloud { animation: drift 46s ease-in-out infinite alternate; }
+  .moon-scene .cloud-b { animation-duration: 58s; animation-direction: alternate-reverse; }
+  @keyframes drift { from { transform: translateX(-26px); } to { transform: translateX(30px); } }
+  .moon-scene .scene-meteor { opacity: 0; animation: meteor 13s linear 4s infinite; }
+  @keyframes meteor { 0% { opacity: 0; transform: translate(0, 0); } 1% { opacity: .9; } 5% { opacity: 0; transform: translate(70px, 24px); } 100% { opacity: 0; transform: translate(70px, 24px); } }
+  .moon-scene .tower-sparkle circle { opacity: 0; animation: sparkle 18s linear infinite; }
+  .moon-scene .tower-sparkle circle:nth-child(3n) { animation-delay: .15s; }
+  .moon-scene .tower-sparkle circle:nth-child(3n+1) { animation-delay: .3s; }
+  @keyframes sparkle { 0%, 3%, 6%, 9%, 12%, 15%, 18% { opacity: 1; } 1.5%, 4.5%, 7.5%, 10.5%, 13.5%, 16.5% { opacity: .1; } 19%, 100% { opacity: 0; } }
+  .moon-scene .lamp-glow { transform-box: fill-box; transform-origin: center; animation: lamp 2.6s ease-in-out infinite; }
+  .moon-scene .flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flame 1.3s ease-in-out infinite; }
+  @keyframes lamp { 50% { opacity: .72; transform: scale(.94); } }
+  @keyframes flame { 33% { transform: scale(.9, 1.08) skewX(-4deg); } 66% { transform: scale(1.05, .93) skewX(3deg); } }
+  .moon-scene .win { opacity: .9; }
+  .moon-scene .win-a { animation: lights 11s steps(1) infinite; }
+  .moon-scene .win-b { animation: lights 17s steps(1) 5s infinite; }
+  @keyframes lights { 0%, 45% { opacity: .9; } 46%, 100% { opacity: 0; } }
+  @media (max-width: 899px) { .moon-scene svg { margin: 0 auto; } .moon-scene figcaption { text-align: center; } }
+  @media (prefers-reduced-motion: reduce) { .moon-scene * { animation: none !important; } .moon-scene .steam path { opacity: .5; } .moon-scene .scene-meteor, .moon-scene .tower-sparkle circle { opacity: 0; } }
+  .big-line { margin: 12px 0 0; font: 400 clamp(2.8rem, 9vw, 5.8rem)/1.02 var(--display); letter-spacing: -.02em; }
+  .mail { display: inline-flex; align-items: center; gap: 12px; margin-top: 30px; font: italic 400 clamp(1.15rem, 3.4vw, 1.7rem)/1.3 var(--display);
+    color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 4px; word-break: break-all; transition: gap .3s; }
+  .mail:hover { gap: 18px; }
+  .mail svg { width: 20px; height: 20px; flex: none; }
+  .site-foot { padding: 0 0 28px; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line);
+    font: 400 .82rem/1.6 var(--sans); color: var(--muted); }
+  .foot a { display: inline-block; padding: 8px 2px; color: var(--ink-2); text-decoration: none; }
+  .foot a:hover { color: var(--accent); }
+  .sign { display: inline-flex; align-items: center; gap: 10px; }
+  .sign > .logo-mark { border-radius: 6px; }
+  .visits { white-space: nowrap; animation: visits-in .8s ease both; }
+  .visits svg { width: 13px; height: 13px; margin: 0 4px 0 2px; vertical-align: -2px; color: var(--accent); }
+  .visits b { font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  @keyframes visits-in { from { opacity: 0; } }
+  .foot i { font: italic 400 .95rem var(--display); }
+
+  /* reveal: a sheet settling onto the page */
+  .js .rv { opacity: 0; transform: translateY(14px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0s); }
+  .js .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .rv { opacity: 1; transform: none; }
+    .dot { animation: none; }
+    *, *::before, *::after { transition-duration: 0s !important; transition-delay: 0s !important; }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* print: a clean, light, one-column CV */
+  @media print {
+    #bg, #sky, .nav, .skip, .ctas, .moon-scene, .hero-scene, .menu-btn, .visits { display: none !important; }
+    :root {
+      --page: #fff; --paper: #fff; --paper-sunk: #f2f3f5; --ink: #000; --ink-2: #222; --muted: #444; --accent: #6b4b00;
+      --line: #ccc; --line-2: #999; --chart-actual: #000; --chart-rte: #777; color-scheme: light; }
+    html, body { background: #fff !important; }
+    body { font-size: 12pt; }
+    .js .rv { opacity: 1 !important; transform: none !important; }
+    .js .chart-svg:not(.on) .draw { stroke-dashoffset: 0; }
+    .js .chart-svg:not(.on) .band { opacity: .2; }
+    .js .chart-svg:not(.on) .rte { opacity: .95; }
+    .hero { padding-top: 0; }
+    section.block { padding-top: 28px; }
+    .tile, .paper, .timeline li, .focus li { break-inside: avoid; }
+    .tile:hover { transform: none; box-shadow: none; }
+    .contact { margin-top: 28px; }
+    .socials a::after, .research a::after { content: " (" attr(href) ")"; font: 400 9pt var(--sans); color: #444; }
+  }
+</style>
+<!-- visits are counted by GoatCounter: no cookies, nothing personal; localhost is never counted -->
+<script data-goatcounter="https://qudotcom.goatcounter.com/count" async src="https://gc.zgo.at/count.v5.js" crossorigin="anonymous" integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
+</head>
+<body>
+<a class="skip" href="#top">Skip to content</a>
+<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Abdelouahed Tahri, back to top"><span class="logo"><svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="#1A2029" stroke="#fff" stroke-opacity=".08"/><g class="mark-moon"><circle cx="46" cy="16" r="7.5" fill="#E2B540"/><circle cx="49.6" cy="13" r="6.3" fill="#1A2029"/></g><path d="M36.5 48.5 L45 36 L54 48.5" fill="none" stroke="#97ACC8" stroke-opacity=".5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 48.5 L26.5 20.5 L43 48.5 M16 38.3 L37 38.3" fill="none" stroke="#F2E7D2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nav-name">Abdelouahed Tahri</span></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+      <svg class="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+      <svg class="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<main id="top" tabindex="-1">
+  <div class="wrap">
+
+    <header class="hero">
+      <div>
+        <p class="label">Engineering &amp; optimization · Paris</p>
+        <h1>Abdelouahed Tahri <span class="sub">builds models, then tries to <span class="mark">break them.</span></span></h1>
+        <p class="lede">Combinatorial optimization with <b>SAT and constraint solvers</b>, <b>reproducible benchmarking</b> under noise, and <b>scientific Python</b>, grounded in mathematics and <b>physics</b>. Former president of the Centrale Quanta club, and keen to work on <b>fault-tolerant compilation</b> and <b>resource estimation</b>. MSc Artificial Intelligence at CentraleSupélec.</p>
+        <div class="status"><span class="dot" aria-hidden="true"></span>Open to a 5–6 month research / R&amp;D internship from May 2027</div>
+        <div class="ctas">
+          <a class="btn primary" href="#work">See the work
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <a class="btn" href="mailto:abdelouahed.tahri@student-cs.fr">Email me</a>
+        </div>
+        <ul class="socials">
+          <li><a href="https://github.com/qudotcom" rel="me">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/abdelouahed-tahri-ai" rel="me">LinkedIn</a></li>
+          <li><a href="https://ssrn.com/abstract=7677118">SSRN preprint</a></li>
+        </ul>
+      </div>
+
+      <figure class="hero-scene">
+        <svg viewBox="0 0 480 470" role="img" aria-labelledby="hs-title">
+          <title id="hs-title">The same man as at the bottom of the page, closer: his own mug of coffee in his hands, looking up at the Big Dipper, whose seven stars are named after fields he has worked in: physics, quantum computing, SAT and constraint solving, scheduling, benchmarking, graphs and forecasting.</title>
+          <defs>
+            <radialGradient id="hs-glow"><stop offset="0" stop-color="#F0E4C3" stop-opacity=".5"/><stop offset="1" stop-color="#F0E4C3" stop-opacity="0"/></radialGradient>
+            <linearGradient id="hs-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".85" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <mask id="hs-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="470"><rect width="480" height="470" fill="url(#hs-fade)"/></mask>
+            <linearGradient id="hs-cyl" x1="0" x2="1"><stop offset="0" stop-color="#1A140E" stop-opacity=".34"/><stop offset=".14" stop-color="#1A140E" stop-opacity="0"/><stop offset=".86" stop-color="#1A140E" stop-opacity="0"/><stop offset="1" stop-color="#1A140E" stop-opacity=".3"/></linearGradient>
+            <clipPath id="hs-mug"><path d="M200 332 V372.3 A18 2.9 0 0 0 236 372.3 V332 Z"/></clipPath>
+          </defs>
+
+          <!-- a few faint stars -->
+          <g fill="#F0E4C3" opacity=".6">
+            <circle cx="58" cy="44" r="1"/><circle cx="112" cy="96" r=".8"/><circle cx="26" cy="168" r=".9"/><circle cx="246" cy="26" r=".9"/>
+            <circle cx="372" cy="70" r=".8"/><circle cx="468" cy="196" r="1"/><circle cx="298" cy="214" r=".8"/><circle cx="412" cy="258" r=".9"/>
+            <circle cx="452" cy="338" r=".8"/><circle cx="330" cy="300" r="1"/><circle cx="286" cy="386" r=".7"/><circle cx="398" cy="420" r=".9"/>
+          </g>
+
+          <!-- the Big Dipper, its stars named after the fields he has worked in; the line is the way he went -->
+          <path class="hs-path" pathLength="1" d="M159.8 198.3 L199.6 130.8 L249.6 118.5 L314.4 105.6 L350.5 145.7 L437.8 113.4 L434.6 49 L314.4 105.6" fill="none" stroke="#F0E4C3" stroke-opacity=".34" stroke-width="1.1" stroke-linejoin="round"/>
+          <g class="hs-star" style="--t:.5s"><circle cx="159.8" cy="198.3" r="9" fill="url(#hs-glow)"/><circle cx="159.8" cy="198.3" r="2.5" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1s"><circle cx="199.6" cy="130.8" r="9" fill="url(#hs-glow)"/><circle cx="199.6" cy="130.8" r="2.4" fill="#FFF6E0"/><circle cx="196.4" cy="129.6" r=".9" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1.32s"><circle cx="249.6" cy="118.5" r="9.5" fill="url(#hs-glow)"/><circle cx="249.6" cy="118.5" r="2.6" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:1.73s"><circle cx="314.4" cy="105.6" r="7.5" fill="url(#hs-glow)"/><circle cx="314.4" cy="105.6" r="2" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:2.07s"><circle cx="350.5" cy="145.7" r="8.5" fill="url(#hs-glow)"/><circle cx="350.5" cy="145.7" r="2.3" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:2.66s"><circle cx="437.8" cy="113.4" r="8.5" fill="url(#hs-glow)"/><circle cx="437.8" cy="113.4" r="2.3" fill="#FFF6E0"/></g>
+          <g class="hs-star" style="--t:3.06s"><circle cx="434.6" cy="49" r="9.5" fill="url(#hs-glow)"/><circle cx="434.6" cy="49" r="2.6" fill="#FFF6E0"/></g>
+          <g class="hs-fields">
+            <text style="--t:.65s" x="150" y="203" text-anchor="end">Physics</text>
+            <text style="--t:1.15s" x="189" y="124" text-anchor="end">Quantum</text>
+            <text style="--t:1.47s" x="249.6" y="105" text-anchor="middle">SAT · CP</text>
+            <text style="--t:1.88s" x="296" y="88" text-anchor="middle">Scheduling</text>
+            <text style="--t:2.22s" x="350.5" y="166" text-anchor="middle">Benchmarking</text>
+            <text style="--t:2.81s" x="428" y="118" text-anchor="end">Graphs</text>
+            <text style="--t:3.21s" x="470" y="35" text-anchor="end">Forecasting</text>
+          </g>
+
+          <!-- him, closer than at the bottom of the page -->
+          <g mask="url(#hs-mask)"><g transform="translate(34 0)">
+            <path d="M28 470 C30 414 50 370 96 352 C130 339 172 342 196 362 C214 378 222 420 226 470 Z" fill="#737C89"/>
+            <path d="M124 316 L125 338" stroke="#C9CED6" stroke-width="32" stroke-linecap="round"/>
+            <path d="M90 352 C102 332 148 329 162 347 C148 360 104 362 90 352 Z" fill="#636B78"/>
+            <!-- his head, tipped back to look up -->
+            <g transform="translate(112 296) rotate(-42)">
+              <circle r="36" fill="#C9CED6"/>
+              <path d="M20 -30 C30 -24 34 -16 34 -10 L44 4 Q45 7 41 8 L36 9 Q38 12 36 15 Q37 19 35 22 Q32 32 20 35 L0 36 L0 -10 Z" fill="#C9CED6"/>
+              <path d="M16 -33 C4 -41 -26 -37 -34 -14 C-38 0 -34 16 -26 27 C-24 18 -19 9 -15 3 C-11 -4 -9 -12 -5 -18 C1 -25 9 -27 16 -33 Z" fill="#59616E"/>
+              <ellipse cx="-6" cy="7" rx="4.5" ry="6.5" fill="#B3BAC5"/>
+            </g>
+            <!-- his forearm rising to the mug, the palm behind it -->
+            <path d="M150 470 L194 370" stroke="#949DAA" stroke-width="26" stroke-linecap="round"/>
+            <ellipse cx="199" cy="354" rx="9" ry="13" fill="#C9CED6"/>
+
+            <!-- his mug, drawn as a cartoon: white, black inside, a black handle, and its print -->
+            <path d="M235.4 338.5 C256 336 258 367 235.4 365.5" stroke="#15171B" stroke-width="6.2" fill="none" stroke-linecap="round"/>
+            <path d="M235.4 338.5 C256 336 258 367 235.4 365.5" transform="translate(235.4 352) scale(1.1) translate(-235.4 -352)" pathLength="1" stroke-dasharray=".58 1" stroke="#8A929D" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+            <path d="M200 332 V372.3 A18 2.9 0 0 0 236 372.3 V332 Z" fill="#F4F0E8"/>
+            <g clip-path="url(#hs-mug)"><g transform="translate(200 332) scale(.5455)"><path d="M5 9 L57 6 L60 66 L8 70 Z" fill="#E8D5B2"/><path d="M5 9 L13 8.5 L12 69.4 L8 70 Z" fill="#D8BC8E"/><g transform="rotate(-4 32 31)"><rect x="13" y="10" width="38" height="42" rx="1.5" fill="#FFFDF8"/><rect x="16" y="13" width="32" height="30" fill="#D88A55"/><rect x="16" y="13" width="32" height="5" fill="#B86A3E"/><path d="M20 13V18M24 13V18M28 13V18M32 13V18M36 13V18M40 13V18M44 13V18" stroke="#8E4E2C" stroke-width=".7"/><rect x="16" y="18" width="3" height="25" fill="#7A3F22"/><rect x="45" y="18" width="3" height="25" fill="#9A4C27"/><path d="M19.5 43C19.5 35 21.5 31.5 26 31.5C30.5 31.5 32.5 35 32.5 43Z" fill="#5C4030"/><circle cx="26" cy="27" r="4.4" fill="#F2C9A8"/><path d="M21.6 26.6C21.4 22.4 24 21.4 26.2 21.5C28.6 21.6 30.6 23 30.4 26C29 24.4 27.2 24 25.4 24.4C23.8 24.8 22.6 25.6 21.6 26.6Z" fill="#33261F"/><path d="M31 43C31 36 33 33 37.5 33C42 33 44 36 44 43Z" fill="#F3EADB"/><path d="M33.6 33.4C35.6 34.8 39.4 34.8 41.4 33.4L41 35.4C39 36.6 36 36.6 34 35.4Z" fill="#3B312C"/><circle cx="37.5" cy="28.6" r="4.2" fill="#F5CFB6"/><path d="M33.2 29.6C32.6 24.8 35 23.4 37.6 23.4C40.4 23.4 42.6 25 42 29.8C41.4 27.4 39.8 26.2 37.6 26.2C35.4 26.2 33.8 27.4 33.2 29.6Z" fill="#2E2119"/><circle cx="37.6" cy="39" r="2.6" fill="#1E1916"/><path d="M35.4 37.6L35.8 35.4L37 36.8ZM39.8 37.6L39.4 35.4L38.2 36.8Z" fill="#1E1916"/><circle cx="27.8" cy="28.6" r=".9" fill="#E59A85" opacity=".8"/><circle cx="39.4" cy="30.2" r=".9" fill="#E59A85" opacity=".8"/></g><g transform="rotate(3 33 58)"><rect x="17" y="50" width="32" height="16" rx="1" fill="#FBF6EA"/><path d="M20 54.6q1.2-1.2 2.4 0t2.4 0t2.4 0t2.4 0t2.4 0t2.4 0t2.4 0M20 58.2q1.2-1.2 2.4 0t2.4 0t2.4 0t2.4 0t2.4 0t2.4 0" stroke="#8B7763" stroke-width=".7" fill="none" stroke-linecap="round"/><path d="M23 61.8H29M37 61.8H43" stroke="#8B7763" stroke-width=".6"/><path d="M31.2 61.4c0-1.1 1.7-1.1 1.7 0c0-1.1 1.7-1.1 1.7 0c0 1.1-1.7 1.9-1.7 2.3c0-.4-1.7-1.2-1.7-2.3Z" fill="#E0503E"/><path d="M41.6 53.4c0-.9 1.4-.9 1.4 0c0-.9 1.4-.9 1.4 0c0 .9-1.4 1.6-1.4 1.9c0-.3-1.4-1-1.4-1.9Z" fill="#E0503E"/></g><path d="M8 66C9 56 11 46 15 38" stroke="#BF9A63" stroke-width=".8" fill="none"/><g fill="#D7B47C"><circle cx="15" cy="38" r="1.1"/><circle cx="13.6" cy="42" r="1"/><circle cx="12.4" cy="46" r="1.1"/><circle cx="11.4" cy="50.5" r="1"/><circle cx="14.6" cy="45" r=".9"/></g><path d="M7.6 71c0-1.2 1.8-1.2 1.8 0c0-1.2 1.8-1.2 1.8 0c0 1.2-1.8 2-1.8 2.4c0-.4-1.8-1.2-1.8-2.4Z" stroke="#C98F7A" stroke-width=".7" fill="none"/></g></g>
+            <path d="M200 332 V372.3 A18 2.9 0 0 0 236 372.3 V332 Z" fill="url(#hs-cyl)"/>
+            <rect x="203.4" y="337.4" width="1.9" height="30.5" rx=".95" fill="#fff" opacity=".3"/>
+            <ellipse cx="218" cy="332" rx="18" ry="2.9" fill="#1D1E22"/>
+            <ellipse cx="218" cy="332.3" rx="16.4" ry="2.25" fill="#0B0B0D"/>
+            <ellipse cx="218" cy="332.9" rx="14.8" ry="1.65" fill="#3A2417"/>
+            <ellipse cx="215.3" cy="332.6" rx="6.3" ry=".55" fill="#5A3A24" opacity=".8"/>
+            <!-- his fingers round the front edge -->
+            <path d="M196.5 346 H204.5 M196.5 353 H205.5 M197 360 H204.5" stroke="#C9CED6" stroke-width="6.4" stroke-linecap="round"/>
+          </g></g>
+
+          <!-- steam off the coffee -->
+          <g class="steam" stroke="#E2D6B4" stroke-width="1.9" fill="none" stroke-linecap="round" transform="translate(34 0)">
+            <path d="M212 326 q-5 -8 0 -16 q5 -8 0 -16"/><path d="M224 324 q-5 -8 0 -16 q5 -8 0 -16"/>
+          </g>
+        </svg>
+        <figcaption>I follow hard problems across fields, and bring the same <em>honesty</em> to each.</figcaption>
+      </figure>
+    </header>
+
+    <div class="stats">
+      <div class="stat rv"><b>2<i>/2</i></b><span>job-shop benchmarks (FT06, FT10) solved to optimality with CP-SAT and a genetic algorithm</span></div>
+      <div class="stat rv" style="--d:.06s"><b>3</b><span>quantum linear solvers (HHL, VQLS, adiabatic) benchmarked against a classical LU solver</span></div>
+      <div class="stat rv" style="--d:.12s"><b>121</b><span>out-of-sample cohorts in a leakage-safe backtesting engine</span></div>
+      <div class="stat rv" style="--d:.18s"><b>4<i>th</i></b><span>nationally in the Pre-Plancks physics competition (2024); 8th in 2025</span></div>
+    </div>
+
+    <p class="now rv"><span class="label">Now</span><span>Benchmarking self-supervised learning on dynamic graphs at the CVN lab, on <b>Slurm</b>. Next: <b>fault-tolerant quantum compilation</b> and <b>resource estimation</b>.</span></p>
+
+    <section class="block" id="focus" aria-labelledby="focus-h">
+      <div class="sec-head rv">
+        <span class="sec-num">i. Focus</span>
+        <h2 id="focus-h">What I work on, <em>and how.</em></h2>
+      </div>
+      <ul class="focus">
+        <li class="rv"><span class="n">01</span><h3>Combinatorial optimization</h3><p>SAT and constraint programming with Google OR-Tools CP-SAT, genetic algorithms, and exact-plus-heuristic hybrids on scheduling benchmarks.</p></li>
+        <li class="rv"><span class="n">02</span><h3>Quantum computing</h3><p>Shor, QFT and Grover from coursework, quantum linear solvers benchmarked against classical LU, and a year leading the Centrale Quanta club.</p></li>
+        <li class="rv"><span class="n">03</span><h3>Benchmarking</h3><p>Reproducible, multi-parameter benchmarks under noise and sparsity on Slurm, with the protocol fixed before the first run.</p></li>
+        <li class="rv"><span class="n">04</span><h3>Scientific Python</h3><p>NumPy, PyTorch and PyTorch Geometric, Git and Docker, on a base of mathematics and physics from CPGE MP.</p></li>
+        <li class="rv"><span class="n">05</span><h3>Graphs</h3><p>Self-supervised learning on dynamic graphs, and a synthetic generator with tunable heterophily, noise and sparsity.</p></li>
+      </ul>
+    </section>
+
+    <section class="block" id="work" aria-labelledby="work-h">
+      <div class="sec-head rv">
+        <span class="sec-num">ii. Selected work</span>
+        <h2 id="work-h">Things I've built, <em>and measured.</em></h2>
+      </div>
+      <div class="bento">
+        <a class="paper tile rv" href="https://github.com/qudotcom/job-shop-scheduler">
+          <div class="tile-top"><span class="tag hot">Optimization · CP-SAT</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>Job-shop scheduler</h3>
+          <p>Exact CP-SAT model combined with a genetic algorithm: optimal on the FT06 and FT10 benchmarks, with interactive Gantt charts.</p>
+          <ul class="chips"><li>OR-Tools</li><li>Genetic algorithms</li><li>Flask</li></ul>
+        </a>
+        <a class="paper tile rv" style="--d:.06s" href="https://github.com/qudotcom/QLP-SOLVER">
+          <div class="tile-top"><span class="tag hot">Quantum</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>QLP-SOLVER</h3>
+          <p>Quantum linear solvers (HHL, VQLS, adiabatic) for elasticity problems, benchmarked against a classical LU solver.</p>
+          <ul class="chips"><li>Qiskit</li><li>FastAPI</li><li>Docker</li></ul>
+        </a>
+        <a class="paper tile rv" style="--d:.12s" href="https://github.com/qudotcom/quantum-chess-arena">
+          <div class="tile-top"><span class="tag">Quantum · Club platform</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>Quantum Chess Arena</h3>
+          <p>Multiplayer chess with superposition and entanglement, an AI opponent and tournament brackets, built for the Centrale Quanta club.</p>
+          <ul class="chips"><li>FastAPI</li><li>SQLAlchemy</li><li>JavaScript</li></ul>
+        </a>
+        <a class="paper tile feature rv" href="https://github.com/qudotcom/timestral-vs-rte">
+          <div class="feature-text">
+            <div class="tile-top"><span class="tag hot">Forecasting · Mistral × ClickHouse</span><span class="go" aria-hidden="true">→</span></div>
+            <h3>Timestral vs RTE: <i>a foundation model against the grid operator</i></h3>
+            <p>Mistral's Timestral, zero-shot on a laptop CPU, against France's official day-ahead demand forecast. Pre-registered protocol, leakage-safe contexts queried from ClickHouse, SQL metrics, a live next-day forecast and a Mistral-written operator brief traced in Langfuse.</p>
+            <div class="big">
+              <div><b>808 MW</b><span>Timestral MAE</span></div>
+              <div><b>1,216 MW</b><span>RTE day-ahead MAE</span></div>
+              <div><b>76%</b><span>of days better</span></div>
+            </div>
+            <ul class="chips"><li>Timestral</li><li>ClickHouse</li><li>Langfuse</li><li>Mistral API</li></ul>
+          </div>
+          <div class="feature-chart">
+            <span class="chart-title">French electricity demand, a day ahead</span>
+            <span class="chart-sub">one week of the pre-registered backtest, 22–28 June 2026</span>
+            <svg class="chart-svg" id="chart" viewBox="0 0 480 260" role="img" aria-labelledby="chart-title" aria-describedby="chart-desc">
+              <title id="chart-title">Timestral and RTE day-ahead forecasts against actual French electricity demand, 22 to 28 June 2026</title>
+              <desc id="chart-desc">Hourly French electricity demand from 22 to 28 June 2026, between about 35 and 60 gigawatts, with Timestral's median forecast and 10 to 90 percent band, and RTE's official day-ahead forecast. Both forecasts track the daily cycle; over the whole June to August test, Timestral's average error was 808 MW against 1,216 MW for RTE.</desc>
+              <line x1="62" x2="476" y1="228.0" y2="228.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="233.0" text-anchor="end">30</text>
+              <line x1="62" x2="476" y1="174.0" y2="174.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="179.0" text-anchor="end">40</text>
+              <line x1="62" x2="476" y1="120.0" y2="120.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="125.0" text-anchor="end">50</text>
+              <line x1="62" x2="476" y1="66.0" y2="66.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="71.0" text-anchor="end">60</text>
+              <line x1="62" x2="476" y1="12.0" y2="12.0" stroke="var(--line)" stroke-width="1"/>
+              <text x="54" y="17.0" text-anchor="end">70 GW</text>
+              <text x="91.7" y="252" text-anchor="middle">Mon</text>
+              <line x1="121.5" x2="121.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="151.2" y="252" text-anchor="middle">Tue</text>
+              <line x1="181.0" x2="181.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="210.7" y="252" text-anchor="middle">Wed</text>
+              <line x1="240.5" x2="240.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="270.2" y="252" text-anchor="middle">Thu</text>
+              <line x1="300.0" x2="300.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="329.7" y="252" text-anchor="middle">Fri</text>
+              <line x1="359.5" x2="359.5" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="389.2" y="252" text-anchor="middle">Sat</text>
+              <line x1="419.0" x2="419.0" y1="12" y2="228" stroke="var(--line)" stroke-dasharray="2 4"/>
+              <text x="448.7" y="252" text-anchor="middle">Sun</text>
+              <path class="fade band" d="M62.0 141.5L64.5 159.0L67.0 166.7L69.4 182.0L71.9 188.6L74.4 184.6L76.9 167.2L79.4 143.6L81.8 122.6L84.3 106.8L86.8 96.6L89.3 89.9L91.7 81.7L94.2 78.6L96.7 79.7L99.2 79.4L101.7 87.1L104.1 92.6L106.6 90.7L109.1 84.0L111.6 91.8L114.1 107.9L116.5 108.2L119.0 107.6L121.5 118.5L124.0 137.1L126.5 147.9L128.9 161.1L131.4 167.5L133.9 166.2L136.4 153.9L138.9 132.8L141.3 112.3L143.8 95.9L146.3 85.3L148.8 77.7L151.2 69.0L153.7 66.3L156.2 66.3L158.7 65.8L161.2 72.7L163.6 77.8L166.1 76.7L168.6 73.2L171.1 80.7L173.6 96.0L176.0 100.7L178.5 99.9L181.0 110.7L183.5 128.9L186.0 145.0L188.4 158.6L190.9 165.3L193.4 163.7L195.9 153.3L198.3 135.1L200.8 116.1L203.3 98.3L205.8 85.8L208.3 77.2L210.7 67.9L213.2 63.6L215.7 62.7L218.2 62.1L220.7 68.0L223.1 72.2L225.6 72.0L228.1 69.1L230.6 76.8L233.1 90.8L235.5 96.6L238.0 95.6L240.5 106.5L243.0 125.8L245.4 139.6L247.9 153.2L250.4 159.7L252.9 158.4L255.4 148.5L257.8 130.4L260.3 111.6L262.8 94.5L265.3 81.8L267.8 72.5L270.2 62.5L272.7 58.2L275.2 56.9L277.7 56.5L280.2 62.7L282.6 66.7L285.1 66.3L287.6 64.9L290.1 73.1L292.6 86.3L295.0 90.9L297.5 90.7L300.0 103.0L302.5 123.3L304.9 138.6L307.4 152.0L309.9 159.1L312.4 157.4L314.9 147.4L317.3 128.7L319.8 109.5L322.3 93.3L324.8 81.4L327.3 72.6L329.7 64.3L332.2 61.0L334.7 60.7L337.2 61.4L339.7 69.1L342.1 73.3L344.6 73.9L347.1 73.9L349.6 82.4L352.0 95.0L354.5 99.2L357.0 95.6L359.5 107.2L362.0 127.3L364.4 148.2L366.9 162.6L369.4 171.4L371.9 173.5L374.4 173.5L376.8 166.1L379.3 154.5L381.8 137.0L384.3 122.3L386.8 111.8L389.2 100.3L391.7 94.3L394.2 97.0L396.7 97.0L399.1 104.0L401.6 107.0L404.1 106.1L406.6 104.9L409.1 109.8L411.5 120.2L414.0 119.8L416.5 114.5L419.0 123.7L421.5 142.6L423.9 158.0L426.4 171.5L428.9 180.9L431.4 185.0L433.9 187.1L436.3 183.8L438.8 175.8L441.3 159.6L443.8 140.6L446.3 125.0L448.7 111.5L451.2 105.5L453.7 109.1L456.2 108.5L458.6 114.2L461.1 116.7L463.6 112.7L466.1 106.5L468.6 106.0L471.0 113.6L473.5 112.9L476.0 112.1L476.0 132.6L473.5 134.8L471.0 131.7L468.6 124.2L466.1 124.6L463.6 130.4L461.1 133.6L458.6 130.9L456.2 124.3L453.7 124.1L451.2 120.0L448.7 125.1L446.3 138.1L443.8 153.3L441.3 172.2L438.8 187.4L436.3 195.1L433.9 198.2L431.4 195.7L428.9 191.4L426.4 182.3L423.9 168.5L421.5 165.0L419.0 146.3L416.5 136.6L414.0 142.4L411.5 142.4L409.1 132.3L406.6 127.3L404.1 128.0L401.6 128.0L399.1 124.4L396.7 116.7L394.2 115.6L391.7 112.3L389.2 117.2L386.8 127.9L384.3 137.9L381.8 152.3L379.3 168.7L376.8 179.8L374.4 186.3L371.9 185.5L369.4 183.3L366.9 174.5L364.4 160.1L362.0 149.3L359.5 129.2L357.0 117.5L354.5 121.5L352.0 115.2L349.6 103.2L347.1 94.5L344.6 93.8L342.1 92.4L339.7 87.3L337.2 78.8L334.7 77.0L332.2 76.4L329.7 79.0L327.3 86.7L324.8 95.3L322.3 106.5L319.8 122.1L317.3 141.5L314.9 159.3L312.4 168.4L309.9 169.8L307.4 163.0L304.9 149.6L302.5 145.4L300.0 125.0L297.5 112.6L295.0 113.8L292.6 108.2L290.1 95.5L287.6 87.1L285.1 87.8L282.6 87.3L280.2 82.2L277.7 75.1L275.2 74.4L272.7 74.3L270.2 77.8L267.8 86.9L265.3 95.7L262.8 107.5L260.3 124.2L257.8 143.1L255.4 160.4L252.9 169.4L250.4 170.5L247.9 164.1L245.4 150.6L243.0 149.5L240.5 130.3L238.0 119.2L235.5 121.6L233.1 113.8L230.6 100.3L228.1 92.5L225.6 94.9L223.1 94.3L220.7 89.2L218.2 82.2L215.7 81.6L213.2 81.1L210.7 84.6L208.3 92.9L205.8 100.9L203.3 112.5L200.8 129.8L198.3 148.7L195.9 166.1L193.4 175.8L190.9 177.2L188.4 170.6L186.0 156.9L183.5 153.5L181.0 135.1L178.5 124.3L176.0 126.0L173.6 120.2L171.1 106.1L168.6 99.0L166.1 101.9L163.6 102.2L161.2 96.8L158.7 89.1L156.2 88.1L153.7 87.2L151.2 88.9L148.8 96.4L146.3 103.0L143.8 112.6L141.3 127.9L138.9 147.8L136.4 168.1L133.9 179.6L131.4 180.4L128.9 174.2L126.5 160.9L124.0 165.8L121.5 148.4L119.0 137.7L116.5 139.4L114.1 133.1L111.6 117.7L109.1 110.0L106.6 116.4L104.1 117.7L101.7 111.9L99.2 103.7L96.7 103.3L94.2 101.4L91.7 103.7L89.3 111.1L86.8 117.5L84.3 126.7L81.8 141.7L79.4 161.3L76.9 183.0L74.4 197.9L71.9 201.4L69.4 194.8L67.0 180.2L64.5 180.4L62.0 163.7Z" fill="var(--accent)"/>
+              <path class="fade rte" d="M62.0 152.5L64.5 166.0L67.0 175.3L69.4 186.3L71.9 188.9L74.4 183.7L76.9 169.1L79.4 148.6L81.8 131.4L84.3 118.9L86.8 108.7L89.3 104.4L91.7 98.3L94.2 94.3L96.7 88.4L99.2 89.3L101.7 93.3L104.1 93.4L106.6 86.8L109.1 86.7L111.6 101.5L114.1 112.3L116.5 113.8L119.0 114.0L121.5 134.1L124.0 149.1L126.5 157.8L128.9 169.2L131.4 174.5L133.9 168.6L136.4 153.8L138.9 134.7L141.3 117.6L143.8 103.7L146.3 96.1L148.8 89.4L151.2 83.8L153.7 82.5L156.2 79.8L158.7 81.8L161.2 86.2L163.6 86.2L166.1 79.8L168.6 77.3L171.1 91.9L173.6 105.9L176.0 107.0L178.5 106.2L181.0 120.9L183.5 134.3L186.0 148.6L188.4 163.8L190.9 168.4L193.4 160.6L195.9 147.6L198.3 127.1L200.8 113.4L203.3 98.5L205.8 90.0L208.3 84.1L210.7 76.8L213.2 77.6L215.7 74.4L218.2 79.4L220.7 86.6L223.1 86.6L225.6 79.3L228.1 75.9L230.6 87.3L233.1 97.9L235.5 98.5L238.0 99.5L240.5 119.1L243.0 137.1L245.4 150.7L247.9 164.3L250.4 168.7L252.9 163.5L255.4 149.6L257.8 131.6L260.3 113.0L262.8 97.5L265.3 90.4L267.8 82.8L270.2 78.5L272.7 79.0L275.2 75.4L277.7 79.4L280.2 82.8L282.6 81.8L285.1 77.9L287.6 78.6L290.1 87.7L292.6 98.9L295.0 97.1L297.5 97.5L300.0 119.9L302.5 135.1L304.9 147.6L307.4 160.6L309.9 165.0L312.4 160.0L314.9 146.0L317.3 125.8L319.8 111.8L322.3 100.3L324.8 91.7L327.3 87.5L329.7 83.5L332.2 83.0L334.7 80.3L337.2 87.5L339.7 94.4L342.1 94.6L344.6 91.3L347.1 90.8L349.6 101.4L352.0 109.8L354.5 108.7L357.0 105.2L359.5 126.8L362.0 141.1L364.4 155.7L366.9 171.8L369.4 179.9L371.9 179.9L374.4 177.5L376.8 171.3L379.3 161.4L381.8 147.9L384.3 137.3L386.8 128.7L389.2 116.4L391.7 118.1L394.2 117.8L396.7 121.6L399.1 129.3L401.6 129.5L404.1 122.2L406.6 118.2L409.1 125.9L411.5 134.0L414.0 128.6L416.5 124.8L419.0 146.9L421.5 160.0L423.9 170.7L426.4 183.9L428.9 191.6L431.4 195.0L433.9 197.9L436.3 193.8L438.8 184.5L441.3 171.2L443.8 157.3L446.3 146.2L448.7 134.9L451.2 136.8L453.7 137.8L456.2 143.3L458.6 153.2L461.1 151.8L463.6 142.1L466.1 131.0L468.6 132.7L471.0 137.2L473.5 134.3L476.0 133.1" fill="none" stroke="var(--chart-rte)" stroke-width="1.5" stroke-dasharray="4 3"/>
+              <path class="draw" pathLength="1" d="M62.0 141.0L64.5 160.6L67.0 171.5L69.4 183.6L71.9 189.9L74.4 185.5L76.9 172.2L79.4 151.9L81.8 130.9L84.3 110.8L86.8 97.9L89.3 88.4L91.7 79.4L94.2 75.4L96.7 75.2L99.2 74.5L101.7 83.8L104.1 88.5L106.6 88.4L109.1 84.1L111.6 90.6L114.1 102.6L116.5 104.8L119.0 103.2L121.5 118.6L124.0 140.1L126.5 151.9L128.9 166.6L131.4 172.8L133.9 171.0L136.4 159.6L138.9 140.9L141.3 121.2L143.8 102.9L146.3 91.7L148.8 83.7L151.2 75.3L153.7 71.3L156.2 71.2L158.7 72.3L161.2 80.4L163.6 83.9L166.1 82.4L168.6 79.8L171.1 85.8L173.6 97.7L176.0 102.4L178.5 99.8L181.0 116.2L183.5 138.0L186.0 148.9L188.4 162.4L190.9 169.0L193.4 167.1L195.9 156.7L198.3 139.4L200.8 120.0L203.3 101.7L205.8 88.8L208.3 78.9L210.7 69.2L213.2 65.4L215.7 65.9L218.2 67.5L220.7 75.1L223.1 79.5L225.6 79.8L228.1 77.1L230.6 82.7L233.1 93.8L235.5 97.1L238.0 96.7L240.5 113.4L243.0 133.3L245.4 142.6L247.9 157.0L250.4 163.8L252.9 162.2L255.4 151.6L257.8 133.0L260.3 114.1L262.8 97.7L265.3 84.8L267.8 74.7L270.2 66.8L272.7 64.1L275.2 64.5L277.7 65.9L280.2 74.4L282.6 78.3L285.1 77.7L287.6 76.2L290.1 84.2L292.6 95.7L295.0 98.6L297.5 97.2L300.0 112.0L302.5 132.5L304.9 143.7L307.4 157.3L309.9 162.5L312.4 161.2L314.9 151.3L317.3 134.0L319.8 116.5L322.3 100.5L324.8 88.8L327.3 79.3L329.7 73.4L332.2 70.8L334.7 72.4L337.2 74.2L339.7 81.1L342.1 85.2L344.6 85.0L347.1 85.6L349.6 93.2L352.0 104.4L354.5 109.4L357.0 108.1L359.5 121.8L362.0 142.9L364.4 154.9L366.9 169.1L369.4 177.0L371.9 180.8L374.4 181.0L376.8 176.2L379.3 166.2L381.8 148.9L384.3 133.5L386.8 121.1L389.2 109.1L391.7 102.7L394.2 104.6L396.7 105.3L399.1 113.1L401.6 116.1L404.1 115.4L406.6 114.5L409.1 119.1L411.5 127.5L414.0 130.5L416.5 128.4L419.0 140.1L421.5 158.8L423.9 167.5L426.4 181.8L428.9 190.2L431.4 193.5L433.9 196.0L436.3 193.7L438.8 186.7L441.3 171.9L443.8 157.5L446.3 144.7L448.7 134.8L451.2 128.0L453.7 131.0L456.2 130.6L458.6 138.0L461.1 138.8L463.6 136.5L466.1 129.0L468.6 129.7L471.0 137.5L473.5 140.0L476.0 136.0" fill="none" stroke="var(--chart-actual)" stroke-width="1.6" stroke-linejoin="round"/>
+              <path class="draw med" pathLength="1" d="M62.0 152.9L64.5 169.2L67.0 173.1L69.4 188.1L71.9 194.6L74.4 190.8L76.9 175.0L79.4 152.3L81.8 132.0L84.3 116.4L86.8 106.7L89.3 100.2L91.7 92.4L94.2 89.5L96.7 90.8L99.2 91.0L101.7 99.0L104.1 104.9L106.6 103.4L109.1 96.7L111.6 104.4L114.1 120.4L116.5 123.8L119.0 122.8L121.5 133.6L124.0 151.4L126.5 154.2L128.9 167.5L131.4 173.7L133.9 172.7L136.4 160.9L138.9 140.2L141.3 120.1L143.8 104.3L146.3 94.3L148.8 87.1L151.2 78.9L153.7 76.4L156.2 77.0L158.7 77.2L161.2 84.7L163.6 90.1L166.1 89.4L168.6 85.9L171.1 93.4L173.6 108.2L176.0 113.4L178.5 112.5L181.0 123.5L183.5 141.3L186.0 150.8L188.4 164.5L190.9 171.0L193.4 169.4L195.9 159.5L198.3 141.7L200.8 122.8L203.3 105.3L205.8 93.2L208.3 84.8L210.7 75.9L213.2 71.7L215.7 71.4L218.2 71.3L220.7 77.8L223.1 82.6L225.6 83.0L228.1 80.0L230.6 87.9L233.1 102.0L235.5 108.6L238.0 107.3L240.5 118.4L243.0 137.3L245.4 144.9L247.9 158.6L250.4 164.8L252.9 163.5L255.4 154.3L257.8 136.6L260.3 117.7L262.8 100.9L265.3 88.6L267.8 79.4L270.2 69.8L272.7 65.7L275.2 65.0L277.7 65.1L280.2 71.8L282.6 76.4L285.1 76.5L287.6 75.3L290.1 83.6L292.6 96.9L295.0 101.9L297.5 101.5L300.0 113.8L302.5 133.9L304.9 144.0L307.4 157.4L309.9 164.2L312.4 162.5L314.9 153.0L317.3 134.8L319.8 115.4L322.3 99.5L324.8 87.9L327.3 79.2L329.7 71.2L332.2 67.9L334.7 68.1L337.2 69.2L339.7 77.4L342.1 82.1L344.6 83.2L347.1 83.4L349.6 92.0L352.0 104.5L354.5 110.0L357.0 106.5L359.5 118.3L362.0 138.1L364.4 153.9L366.9 168.1L369.4 176.8L371.9 178.8L374.4 179.2L376.8 172.5L379.3 161.0L381.8 144.1L384.3 129.7L386.8 119.5L389.2 108.3L391.7 102.5L394.2 105.8L396.7 106.2L399.1 113.7L401.6 117.0L404.1 116.9L406.6 115.9L409.1 120.8L411.5 131.1L414.0 130.7L416.5 125.6L419.0 135.2L421.5 153.6L423.9 163.3L426.4 176.7L428.9 185.9L431.4 190.0L433.9 192.4L436.3 189.3L438.8 181.3L441.3 165.6L443.8 146.8L446.3 131.7L448.7 118.3L451.2 112.5L453.7 116.7L456.2 116.3L458.6 122.4L461.1 125.0L463.6 121.6L466.1 115.5L468.6 115.0L471.0 122.7L473.5 123.6L476.0 122.4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
+            </svg>
+            <ul class="legend" aria-hidden="true">
+              <li><span class="sw" style="background:var(--chart-actual)"></span>Actual</li>
+              <li><span class="sw" style="background:var(--accent);height:3px"></span>Timestral median</li>
+              <li><span class="sw band"></span>10–90% band</li>
+              <li><span class="sw" style="background:repeating-linear-gradient(90deg,var(--chart-rte) 0 4px,transparent 4px 7px)"></span>RTE day-ahead (J-1)</li>
+            </ul>
+          </div>
+        </a>
+        <a class="paper tile rv" style="--d:.06s" href="https://github.com/qudotcom/tourism-ai">
+          <div class="tile-top"><span class="tag">LLM · RAG</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>Zelig, <i>a RAG travel assistant</i></h3>
+          <p>Hybrid retrieval over a curated knowledge base, persistent memory, and a live news-based safety agent with risk scoring.</p>
+          <ul class="chips"><li>LangChain</li><li>ChromaDB</li><li>FastAPI</li><li>React</li></ul>
+        </a>
+        <a class="paper tile rv" href="https://github.com/qudotcom/macaroon-app">
+          <div class="tile-top"><span class="tag">On-device LLM</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>Macaroon</h3>
+          <p>Offline-first journaling app running a GGUF model on the phone through a custom llama.cpp plugin. Encrypted backups, EN/FR/AR with RTL.</p>
+          <ul class="chips"><li>llama.cpp</li><li>Kotlin / C++</li><li>Capacitor</li></ul>
+        </a>
+        <a class="paper tile rv" style="--d:.12s" href="https://github.com/qudotcom/exovision-ai">
+          <div class="tile-top"><span class="tag">Hackathon</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>ExoVision AI</h3>
+          <p>Classifies Kepler exoplanet candidates and lets users fine-tune the model on their own labelled data.</p>
+          <ul class="chips"><li>LightGBM</li><li>Flask</li></ul>
+        </a>
+        <a class="paper tile more rv" style="--d:.12s" href="https://github.com/qudotcom">
+          <div class="tile-top"><span class="tag">Everything else</span><span class="go" aria-hidden="true">→</span></div>
+          <h3>More on GitHub</h3>
+          <p>Quantum ML notebooks, coursework and experiments.</p>
+          <p class="handle">github.com/qudotcom</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="block" id="research" aria-labelledby="research-h">
+      <div class="sec-head rv">
+        <span class="sec-num">iii. Research</span>
+        <h2 id="research-h">Questions I'm <em>chasing.</em></h2>
+      </div>
+      <div class="research">
+        <article class="paper rv">
+          <span class="label" style="color:var(--accent)">CVN lab, CentraleSupélec · 2026–2027 · target NeurIPS / ICLR</span>
+          <h3>Self-supervised learning on dynamic graphs</h3>
+          <p>A reproducible benchmark for contrastive and generative dynamic-graph SSL models, and a synthetic graph generator with tunable temporal heterophily, smoothness, feature noise, sparsity and unseen nodes, to isolate what drives each performance gap.</p>
+          <ul class="chips"><li>PyTorch Geometric</li><li>Slurm</li><li>Node classification</li><li>Link prediction</li></ul>
+        </article>
+        <article class="paper rv" style="--d:.08s">
+          <span class="label" style="color:var(--accent)">Preprint · SSRN</span>
+          <h3>Systematic strategy backtesting and validation</h3>
+          <p>A reproducible Python backtesting engine with explicit data-leakage protection and out-of-sample evaluation across 121 cohorts. <a href="https://ssrn.com/abstract=7677118">Read it on SSRN</a>.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="experience" aria-labelledby="experience-h">
+      <div class="sec-head rv">
+        <span class="sec-num">iv. Experience</span>
+        <h2 id="experience-h">Where I've <em>shipped.</em></h2>
+      </div>
+      <ol class="timeline">
+        <li class="rv"><span class="when">2025 – 2026</span><div><h3>President, Centrale Quanta Club</h3><div class="where">Quantum computing club, École Centrale Casablanca</div></div><p>Ran campus outreach to promote quantum computing, student study projects and technical workshops.</p></li>
+        <li class="rv"><span class="when">May – Aug 2026</span><div><h3>ML Intern, Conversational AI</h3><div class="where">CRSC, deployed at BMCI Bank</div></div><p>Owned the Moroccan Darija language component of a voice AI system that trains bank sales teams.</p></li>
+        <li class="rv"><span class="when">Jul – Aug 2025</span><div><h3>Data Science &amp; Modelling Intern</h3><div class="where">Bank Al-Maghrib, Central Bank of Morocco</div></div><p>GDP nowcasting with Reservoir Computing: <b>25% more accurate</b> than classical statistical baselines. Results presented to senior management.</p></li>
+      </ol>
+    </section>
+
+    <section class="block" id="education" aria-labelledby="education-h">
+      <div class="sec-head rv">
+        <span class="sec-num">v. Education</span>
+        <h2 id="education-h">Trained in <em>maths first.</em></h2>
+      </div>
+      <div class="edu">
+        <div class="paper rv"><span class="when">2026 – 2027</span><h3>MSc Artificial Intelligence</h3><p>CentraleSupélec, Université Paris-Saclay</p><p>Optimization for ML, AI planning, decision modeling, graphical models</p></div>
+        <div class="paper rv" style="--d:.06s"><span class="when">2024 – 2027</span><h3>Diplôme d'Ingénieur, AI &amp; Digital Transformation</h3><p>École Centrale Casablanca</p></div>
+        <div class="paper rv" style="--d:.12s"><span class="when">2022 – 2024</span><h3>CPGE MP</h3><p>Lycée Omar Ibn Al-Khattab, Meknès</p></div>
+      </div>
+      <ul class="extras rv">
+        <li><b>Arabic</b> native</li>
+        <li><b>French</b> C1</li>
+        <li><b>English</b> professional</li>
+        <li><b>Pre-Plancks</b> physics competition: 4th (2024), 8th (2025) nationally</li>
+        <li><b>Quantum computing</b> courses: VP Quantum (2024); Shor, QFT and Grover, University of Colorado Boulder (2025)</li>
+      </ul>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-h">
+      <div class="contact-grid">
+        <div>
+          <span class="sec-num rv">vi. Contact</span>
+          <h2 class="big-line rv" id="contact-h">Let's build something <span class="mark">honest.</span></h2>
+          <a class="mail rv" href="mailto:abdelouahed.tahri@student-cs.fr">abdelouahed.tahri@student-cs.fr
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        </div>
+        <figure class="moon-scene rv" style="--d:.1s">
+          <svg viewBox="0 -130 480 450" role="img" aria-labelledby="moon-title">
+            <title id="moon-title">A man in a lounge chair on a hill at night, drinking coffee and looking up at the moon high above, with Paris and the Eiffel Tower on the horizon.</title>
+            <defs>
+              <radialGradient id="moon-glow"><stop offset="0" stop-color="var(--moon)" stop-opacity=".5"/><stop offset="1" stop-color="var(--moon)" stop-opacity="0"/></radialGradient>
+              <radialGradient id="lamp-glow"><stop offset="0" stop-color="#E2B540" stop-opacity=".55"/><stop offset="1" stop-color="#E2B540" stop-opacity="0"/></radialGradient>
+              <linearGradient id="hill-line" x1="0" x2="1"><stop offset="0" stop-color="var(--chair)" stop-opacity="0"/><stop offset=".15" stop-color="var(--chair)" stop-opacity=".7"/><stop offset=".85" stop-color="var(--chair)" stop-opacity=".7"/><stop offset="1" stop-color="var(--chair)" stop-opacity="0"/></linearGradient>
+              <linearGradient id="mug-white" x1="0" x2="1"><stop offset="0" stop-color="#D6CFC2"/><stop offset=".22" stop-color="#F5F1E9"/><stop offset=".6" stop-color="#FDFBF7"/><stop offset="1" stop-color="#D0C9BC"/></linearGradient>
+              <linearGradient id="mug-curve" x1="0" x2="1"><stop offset="0" stop-color="#20180F" stop-opacity=".3"/><stop offset=".25" stop-color="#20180F" stop-opacity="0"/><stop offset=".75" stop-color="#20180F" stop-opacity="0"/><stop offset="1" stop-color="#20180F" stop-opacity=".34"/></linearGradient>
+              <clipPath id="mug-clip"><path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z"/></clipPath>
+              <radialGradient id="moon-face" cx=".38" cy=".35" r=".75"><stop offset="0" stop-color="var(--moon-lit)"/><stop offset="1" stop-color="var(--moon)"/></radialGradient>
+            </defs>
+
+            <!-- sky: stars, the moon, clouds, a shooting star -->
+            <g class="scene-stars" fill="var(--moon)">
+              <circle cx="40" cy="44" r="1.1"/><circle cx="118" cy="-20" r="1.3"/><circle cx="196" cy="62" r="1"/><circle cx="262" cy="-60" r="1.4"/><circle cx="330" cy="-118" r="1.2"/><circle cx="210" cy="-104" r="1"/><circle cx="60" cy="-80" r="1.1"/><circle cx="460" cy="-10" r="1"/>
+              <circle cx="300" cy="110" r="1"/><circle cx="458" cy="150" r="1.2"/><circle cx="470" cy="34" r="1"/><circle cx="226" cy="128" r=".9"/><circle cx="80" cy="96" r=".9"/>
+            </g>
+            <line class="scene-meteor" x1="140" y1="-50" x2="186" y2="-34" stroke="var(--moon)" stroke-width="1.4" stroke-linecap="round"/>
+            <circle class="moon-halo" cx="408" cy="-84" r="92" fill="url(#moon-glow)"/>
+            <circle cx="408" cy="-84" r="27" fill="url(#moon-face)"/>
+            <g fill="var(--moon-shade)">
+              <circle cx="399" cy="-91" r="5"/><circle cx="417" cy="-75" r="3.4"/><circle cx="413" cy="-96" r="2.2"/><circle cx="397" cy="-73" r="2"/>
+            </g>
+            <g class="cloud cloud-a" fill="var(--cloud)"><ellipse cx="366" cy="-62" rx="44" ry="6"/><ellipse cx="388" cy="-68" rx="22" ry="7"/></g>
+            <g class="cloud cloud-b" fill="var(--cloud)"><ellipse cx="300" cy="30" rx="34" ry="5"/><ellipse cx="314" cy="25" rx="16" ry="5.5"/></g>
+
+            <!-- Paris on the horizon -->
+            <g fill="var(--skyline)">
+              <rect x="292" y="244" width="14" height="16"/><rect x="308" y="236" width="10" height="24"/><rect x="320" y="248" width="20" height="12"/><rect x="342" y="242" width="12" height="18"/>
+              <rect x="420" y="240" width="16" height="20"/><rect x="438" y="248" width="12" height="12"/><rect x="452" y="238" width="16" height="22"/>
+              <path d="M376 260 L386 228 L383.5 226 L388.6 208 L390.8 192 L392 182 L393.2 192 L395.4 208 L400.5 226 L398 228 L408 260 L401 260 Q392 245 383 260 Z"/>
+              <rect x="381.5" y="225" width="21" height="3" rx="1"/><rect x="386.5" y="207" width="11" height="2.4" rx="1"/>
+            </g>
+            <g class="tower-sparkle" fill="#FFF4E3">
+              <circle cx="392" cy="188" r="1"/><circle cx="390.5" cy="199" r=".9"/><circle cx="393.6" cy="203" r=".9"/><circle cx="389" cy="214" r=".9"/>
+              <circle cx="395.2" cy="218" r=".9"/><circle cx="386.6" cy="232" r=".9"/><circle cx="397.6" cy="234" r=".9"/><circle cx="384" cy="244" r=".9"/>
+              <circle cx="400.4" cy="246" r=".9"/><circle cx="381" cy="254" r=".9"/><circle cx="403" cy="254" r=".9"/><circle cx="392" cy="238" r=".9"/>
+            </g>
+            <g fill="#E2B540"><rect class="win win-a" x="311" y="242" width="2.4" height="2.4"/><rect class="win" x="424" y="246" width="2.4" height="2.4"/><rect class="win win-b" x="457" y="244" width="2.4" height="2.4"/></g>
+
+            <!-- the hill -->
+            <path d="M0 262 Q120 250 250 258 T480 256" fill="none" stroke="url(#hill-line)" stroke-width="1.4"/>
+
+            <!-- the side table: a book and a lantern -->
+            <circle class="lamp-glow" cx="270" cy="206" r="34" fill="url(#lamp-glow)"/>
+            <g stroke="var(--chair)" stroke-linecap="round" fill="none">
+              <path d="M246 220 L294 220" stroke-width="4"/><path d="M270 221 L270 257" stroke-width="3.5"/><path d="M258 258 L282 258" stroke-width="3.5"/>
+            </g>
+            <rect x="248" y="213" width="16" height="5" rx="1" fill="var(--figure-2)"/>
+            <rect x="250" y="210" width="12" height="3" rx="1" fill="var(--figure)"/>
+            <g stroke="var(--chair)" stroke-width="1.8" fill="none" stroke-linejoin="round">
+              <path d="M264 218 L264 200 L276 200 L276 218 Z"/><path d="M266 200 L270 194 L274 200"/><path d="M270 194 L270 190"/>
+            </g>
+            <ellipse class="flame" cx="270" cy="210" rx="2.6" ry="4.4" fill="#E2B540"/>
+
+            <!-- the lounge chair -->
+            <g stroke="var(--chair)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path d="M100 140 L120 232" stroke-width="5"/><path d="M116 229 L204 224" stroke-width="5"/>
+              <path d="M122 232 L110 260" stroke-width="4.5"/><path d="M198 225 L210 260" stroke-width="4.5"/>
+              <path d="M128 198 L186 193" stroke-width="3.5"/><path d="M182 194 L184 224" stroke-width="3.5"/>
+            </g>
+
+            <!-- him: far leg and arm first, in the darker tone -->
+            <g stroke="var(--figure-2)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path d="M140 216 L196 209 L212 254" stroke-width="14"/>
+              <path d="M211 256 L229 260" stroke-width="8"/>
+              <path d="M118 160 L136 194 L168 196" stroke-width="10"/>
+            </g>
+            <path d="M106 152 C110 143 128 141 137 149 L157 214 C151 224 135 227 127 222 Z" fill="var(--figure)"/>
+            <g stroke="var(--figure)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path d="M143 219 L203 216 L215 257" stroke-width="15.5"/>
+              <path d="M214 259 L234 263" stroke-width="9"/>
+              <path d="M124 147 L128 134" stroke-width="10"/>
+            </g>
+            <!-- his head: it gazes at the moon, and dips a little to meet the cup -->
+            <g id="m-head">
+              <circle cx="130" cy="121" r="14.5" fill="var(--figure)"/>
+              <path d="M116.2 128 A14.6 14.6 0 0 1 125 107.4 Q124 116 122 121 Q120 127 116.2 128 Z" fill="var(--hair)"/>
+              <path d="M139.6 109.4 L147.8 108.6 L144.2 116.2 Z" fill="var(--figure)"/>
+            </g>
+
+            <!-- the coffee arm: shoulder, elbow and wrist, so the cup really reaches his lips -->
+            <g id="m-arm" transform="rotate(0 127 157)">
+              <path d="M127 157 L149 190" stroke="var(--figure)" stroke-width="10" stroke-linecap="round" fill="none"/>
+              <g id="m-fore" transform="rotate(0 149 190)">
+                <path d="M149 190 L177.2 164.6" stroke="var(--figure)" stroke-width="9.5" stroke-linecap="round" fill="none"/>
+                <g id="m-mug" transform="rotate(0 177.2 164.6)">
+                  <!-- his own mug: white outside, black inside and a black handle; its printed front is a photograph of the real one -->
+                  <ellipse cx="175.4" cy="161.6" rx="3.3" ry="4.4" fill="var(--figure)"/>
+                  <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" stroke="#16181C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <path d="M187.6 154.5 C195.8 153.2 196.8 164.4 187.6 164.5" transform="translate(187.6 159.5) scale(1.13) translate(-187.6 -159.5)" pathLength="1" stroke-dasharray=".6 1" stroke="#8A929D" stroke-width=".44" fill="none" stroke-linecap="round"/>
+                  <path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z" fill="url(#mug-white)"/>
+                  <image href="../mug.jpg" x="175.2" y="152.3" width="13" height="15.6" preserveAspectRatio="none" clip-path="url(#mug-clip)"/>
+                  <path d="M175.2 152.4 V166.9 A6.5 1 0 0 0 188.2 166.9 V152.4 Z" fill="url(#mug-curve)"/>
+                  <ellipse cx="181.7" cy="152.4" rx="6.5" ry="1.05" fill="#1C1D21"/>
+                  <ellipse cx="181.7" cy="152.58" rx="5.7" ry=".66" fill="#070708"/>
+                  <path d="M174.5 158.9 Q176.7 156.3 178.8 155.5" stroke="var(--figure)" stroke-width="2.7" stroke-linecap="round" fill="none"/>
+                </g>
+              </g>
+            </g>
+            <!-- steam rises straight up from the rim, whatever the cup's angle -->
+            <g id="m-steam" transform="translate(181.7 151.6)">
+              <g class="steam" stroke="var(--steam)" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M-2.5 -2 q-4 -6 0 -12 q4 -6 0 -12"/><path d="M3 -3 q-4 -6 0 -12 q4 -6 0 -12"/>
+              </g>
+            </g>
+          </svg>
+          <figcaption>A man has found his <span class="mark">destination.</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot">
+      <span class="sign"><svg class="logo-mark" width="22" height="22" viewBox="0 0 64 64" aria-hidden="true"><rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="#1A2029" stroke="#fff" stroke-opacity=".08"/><g class="mark-moon"><circle cx="46" cy="16" r="7.5" fill="#E2B540"/><circle cx="49.6" cy="13" r="6.3" fill="#1A2029"/></g><path d="M36.5 48.5 L45 36 L54 48.5" fill="none" stroke="#97ACC8" stroke-opacity=".5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 48.5 L26.5 20.5 L43 48.5 M16 38.3 L37 38.3" fill="none" stroke="#F2E7D2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>© 2026 Abdelouahed Tahri · <i>Paris</i><span id="paris-time"></span><span class="visits" id="visits" hidden title="Visits, counted anonymously with GoatCounter: no cookies, nothing personal"> · <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><b id="visits-n"></b> <span id="visits-word">visits</span></span></span></span>
+      <span><a href="https://github.com/qudotcom" rel="me">GitHub</a> · <a href="https://www.linkedin.com/in/abdelouahed-tahri-ai" rel="me">LinkedIn</a> · <a href="https://ssrn.com/abstract=7677118">SSRN</a> · <a href="../">Full portfolio</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* how many visits: GoatCounter's public total for the site. If it can't be had
+     (an ad blocker, the service down), the counter simply stays hidden. */
+  var gc = document.querySelector("script[data-goatcounter]"), visits = document.getElementById("visits");
+  if (gc && visits && window.fetch) {
+    fetch(gc.getAttribute("data-goatcounter").replace(/\/count$/, "") + "/counter/TOTAL.json")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var n = d ? parseInt(String(d.count).replace(/[^0-9]/g, ""), 10) : 0;
+        if (!n) return;
+        document.getElementById("visits-n").textContent = n.toLocaleString("en-US");
+        document.getElementById("visits-word").textContent = n === 1 ? "visit" : "visits";
+        visits.hidden = false;
+      })
+      .catch(function () {});
+  }
+
+  /* what time it is where I am */
+  var pt = document.getElementById("paris-time");
+  var tick = function () {
+    try { pt.textContent = ", " + new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" }).format(new Date()); } catch (e) {}
+  };
+  tick(); setInterval(tick, 30000);
+
+  /* nav rule once the page moves */
+  var nav = document.querySelector(".nav");
+  var onScroll = function () { nav.classList.toggle("scrolled", window.scrollY > 8); };
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* the phone menu */
+  var menuBtn = document.querySelector(".menu-btn");
+  var setMenu = function (open) {
+    nav.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Menu");
+  };
+  menuBtn.addEventListener("click", function () { setMenu(!nav.classList.contains("open")); });
+  document.querySelectorAll(".nav-links a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); menuBtn.focus(); } });
+  document.addEventListener("click", function (e) { if (nav.classList.contains("open") && !nav.contains(e.target)) setMenu(false); });
+  window.addEventListener("resize", function () { if (window.innerWidth >= 760 && nav.classList.contains("open")) setMenu(false); });
+
+  /* sheets settle as they arrive */
+  var items = document.querySelectorAll(".rv");
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    items.forEach(function (el) { io.observe(el); });
+  } else { items.forEach(function (el) { el.classList.add("in"); }); }
+
+  /* the Timestral chart is drawn in the page; this only plays its entrance once it is on screen */
+  var chart = document.getElementById("chart");
+  if ("IntersectionObserver" in window && !reduce) {
+    var co = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { chart.classList.add("on"); co.disconnect(); } }, { threshold: .3 });
+    co.observe(chart);
+  } else { chart.classList.add("on"); }
+})();
+</script>
+
+<script>
+/* The man in the contact scene. He rests, gazing up at the moon; now and then he
+   lifts his coffee and sips. The arm turns at the shoulder, the elbow and the
+   wrist; the angles were solved (two-joint inverse kinematics) so that, at the
+   top of the sip, the cup's rim meets his lips while his head dips to meet it. */
+(function () {
+  var svg = document.querySelector(".moon-scene svg");
+  var arm = document.getElementById("m-arm"), fore = document.getElementById("m-fore"), mug = document.getElementById("m-mug");
+  var head = document.getElementById("m-head"), steam = document.getElementById("m-steam");
+  if (!svg || !arm || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var R = Math.PI / 180, S = [127, 157], LU = 39.66, LF = 38, B0 = 56.31, T0 = -42, RIM = [4.5, -13];
+  var SIP = { shoulder: -33.9, elbow: -25.4, wrist: 29.2, head: 16 };
+  var ease = function (x) { x = Math.max(0, Math.min(1, x)); return .5 - .5 * Math.cos(Math.PI * x); };
+  var start = null;
+
+  var pose = function (t) {
+    if (start === null) start = t;
+    var c = ((t - start) / 1000 + 3) % 11;                          // an 11 s cycle; the first sip comes soon
+    var s = c < 5 ? 0 : c < 6.3 ? ease((c - 5) / 1.3) : c < 7.5 ? 1 : c < 8.8 ? 1 - ease((c - 7.5) / 1.3) : 0;
+    var drink = c >= 6.3 && c < 7.5 ? Math.sin((c - 6.3) / 1.2 * Math.PI) : 0;
+    apply(s, drink, t);
+  };
+  var apply = function (s, drink, t) {
+    var idle = Math.sin(t / 1700) * (1 - s);                        // the cup sways a little while he gazes
+    var db = SIP.shoulder * s, dr = SIP.elbow * s + 1.6 * idle, dm = SIP.wrist * s + 5 * drink - 1.6 * idle;
+    var dh = SIP.head * ease((s - .35) / .65) + .6 * Math.sin(t / 2300) * (1 - s);
+    arm.setAttribute("transform", "rotate(" + db.toFixed(2) + " 127 157)");
+    fore.setAttribute("transform", "rotate(" + dr.toFixed(2) + " 149 190)");
+    mug.setAttribute("transform", "rotate(" + dm.toFixed(2) + " 177.2 164.6)");
+    head.setAttribute("transform", "rotate(" + dh.toFixed(2) + " 127 137)");
+    var b = (B0 + db) * R, th = (T0 + db + dr) * R, al = (db + dr + dm) * R;
+    var fx = S[0] + LU * Math.cos(b) + LF * Math.cos(th), fy = S[1] + LU * Math.sin(b) + LF * Math.sin(th);
+    var rx = fx + RIM[0] * Math.cos(al) - RIM[1] * Math.sin(al), ry = fy + RIM[0] * Math.sin(al) + RIM[1] * Math.cos(al);
+    steam.setAttribute("transform", "translate(" + rx.toFixed(2) + " " + ry.toFixed(2) + ")");
+    steam.setAttribute("opacity", (1 - Math.min(1, s * 1.6)).toFixed(3));
+  };
+
+  var visible = false, running = false;
+  var loop = function (t) { if (!visible) { running = false; return; } pose(t); requestAnimationFrame(loop); };
+  new IntersectionObserver(function (es) {
+    visible = es[0].isIntersecting;
+    if (visible && !running) { running = true; requestAnimationFrame(loop); }
+  }).observe(svg);
+})();
+</script>
+
+<script>
+/* The night sky behind the page, drawn after the real one. A still layer is
+   painted once: the Milky Way with its star clouds and dark dust lanes,
+   thousands of faint stars in true star colours, a few far galaxies (kept out
+   of the Milky Way, whose dust hides them in the real sky too), a gold-and-blue
+   double star and the remnant of a supernova, small and towards the margins.
+   Only small things move: the brighter stars twinkle, the pulsar inside the
+   remnant beats every 1.337 s like the first one ever found, and now and then
+   a meteor falls away from its shower's radiant or a satellite crosses and
+   fades into the Earth's shadow. The faint sky comes up slowly, as it does
+   while the eyes get used to the dark; the whole sky pans a little with
+   scrolling; and all of it holds still for reduced motion. */
+(function () {
+  var c = document.getElementById("bg"), sky = document.getElementById("sky");
+  if (!c || !c.getContext || !sky || !sky.getContext) return;
+  var ctx = c.getContext("2d"), sctx = sky.getContext("2d");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PAN = .04, GLOW = .13;             // how far the sky follows the scroll; how bright the Milky Way is
+  var W = 0, H = 0, SH = 0, extra = 0, dpr = 0, sdpr = 1, gen = 0, lastOff = -1;
+  var geo = null, bright = [], faint = [], galaxies = [], placed = [], remnant = null, pulsar = null;
+  var meteors = [], sats = [], nextMeteor = 6000 + Math.random() * 6000, nextSat = 15000 + Math.random() * 15000;
+
+  /* star colours by temperature, hottest first: the colour of a body glowing that hot (after M. Charity) */
+  var TEMP = [[155, 176, 255], [170, 191, 255], [202, 215, 255], [248, 247, 255], [255, 244, 234], [255, 222, 186], [255, 198, 140]];
+  var WHITE = [255, 255, 255];
+  var mix = function (a, b, f) { return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]; };
+  var css = function (rgb, a) { return "rgba(" + Math.round(rgb[0]) + "," + Math.round(rgb[1]) + "," + Math.round(rgb[2]) + "," + Math.max(0, Math.min(1, a)).toFixed(3) + ")"; };
+  var smooth = function (a, b, x) { x = Math.max(0, Math.min(1, (x - a) / (b - a))); return x * x * (3 - 2 * x); };
+
+  /* a seeded random source, so every visitor gets the same sky */
+  var seed = 1, rnd = function () {
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+  var pickTemp = function () { var r = rnd(); return TEMP[r < .06 ? 0 : r < .17 ? 1 : r < .34 ? 2 : r < .56 ? 3 : r < .78 ? 4 : r < .93 ? 5 : 6]; };
+  /* star magnitudes as in the real sky: one magnitude fainter, about 2.2 times as many stars */
+  var magnitude = function (lo, hi) { var a = Math.exp(.8 * lo), b = Math.exp(.8 * hi); return Math.log(a + rnd() * (b - a)) / .8; };
+  var alphaOf = function (m) { return Math.min(1, .1 * Math.pow(10, -.168 * (m - 7.4))); };
+
+  /* smooth value noise in octaves, each one turned so that no grid shows */
+  var perm = new Uint8Array(512), vals = new Float32Array(256), i0, j0, k0;
+  for (i0 = 0; i0 < 256; i0++) { perm[i0] = i0; vals[i0] = rnd(); }
+  for (i0 = 255; i0 > 0; i0--) { j0 = Math.floor(rnd() * (i0 + 1)); k0 = perm[i0]; perm[i0] = perm[j0]; perm[j0] = k0; }
+  for (i0 = 0; i0 < 256; i0++) perm[i0 + 256] = perm[i0];
+  var noise = function (x, y) {
+    var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, X = xi & 255, Y = yi & 255;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = vals[perm[perm[X] + Y]], b = vals[perm[perm[X + 1] + Y]], d = vals[perm[perm[X] + Y + 1]], e = vals[perm[perm[X + 1] + Y + 1]];
+    return a + (b - a) * u + (d - a) * v + (a - b - d + e) * u * v;
+  };
+  var fbm = function (x, y, oct) {
+    var s = 0, amp = .5, norm = 0, nx;
+    for (var o = 0; o < oct; o++) { s += amp * noise(x, y); norm += amp; nx = 1.6 * x - 1.2 * y + 7.3; y = 1.2 * x + 1.6 * y + 3.1; x = nx; amp *= .5; }
+    return s / norm;
+  };
+
+  /* the Milky Way runs corner to corner, its bright centre low on the left */
+  var setBand = function () {
+    var diag = Math.hypot(W, H), ang = Math.atan2(-.82 * H, 1.1 * W);
+    geo = { ca: Math.cos(ang), sa: Math.sin(ang), cx: W * .52, cy: SH * .5, w: diag * .085, u0: -diag * .42, L: diag * .3 };
+  };
+  var band = function (x, y) {           // 1 on the band's centre line, falling to 0 away from it
+    var px = x - geo.cx, py = y - geo.cy, u = px * geo.ca + py * geo.sa, v = -px * geo.sa + py * geo.ca;
+    var w = geo.w * (1 + .8 * Math.exp(-Math.pow((u - geo.u0) / geo.L, 2)));
+    return Math.exp(-(v * v) / (w * w));
+  };
+
+  /* how a star's light spreads, on the eye as on a lens: a sharp core that
+     burns white when it is bright, in a soft halo of the star's own colour.
+     Each bright star gets its own small image, at the screen's own pixels. */
+  var starSprite = function (L, rgb) {
+    var lg = Math.log(L) / Math.LN10, peak = Math.min(1, .135 * Math.pow(L, .42));
+    var sc = .42 + .16 * lg, sh = 1.4 + 1.1 * lg, so = 3.5 + 3 * lg;              // widths, in CSS pixels
+    var ah = .13 * Math.min(1, lg / 1.4), ao = .03 * Math.min(1, lg / 2.4);
+    var R = Math.ceil((ao > .006 ? so * 2.4 : sh * 2.6) * dpr) + 1, S = R * 2;
+    var cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    for (var y = 0; y < S; y++) for (var x = 0; x < S; x++) {
+      var r2 = (Math.pow(x + .5 - R, 2) + Math.pow(y + .5 - R, 2)) / (dpr * dpr);
+      var core = Math.exp(-r2 / (2 * sc * sc)), I = peak * (core + ah * Math.exp(-r2 / (2 * sh * sh)) + ao * Math.exp(-r2 / (2 * so * so)));
+      var wt = Math.min(1, core * peak * .9), k = (y * S + x) * 4;
+      d[k] = rgb[0] + (255 - rgb[0]) * wt; d[k + 1] = rgb[1] + (255 - rgb[1]) * wt; d[k + 2] = rgb[2] + (255 - rgb[2]) * wt;
+      d[k + 3] = Math.min(255, I * 255);
+    }
+    g.putImageData(img, 0, 0);
+    return { cv: cv, R: R / dpr };
+  };
+  var star = function (x, y, m, rgb) {
+    var L = Math.pow(10, -.4 * (m - 7.4));
+    return { x: x, y: y, spr: starSprite(L, rgb), tw: 0, amp: .1 + .17 * Math.min(1, Math.log(L) / Math.LN10 / 3) };
+  };
+
+  /* small things live in the free margins beside the content, never behind it,
+     and keep clear of each other; want(x, y) says whether a place suits one */
+  var spot = function (r, want) {
+    var box = document.querySelector("main > .wrap"), left = 0, x = 0, y = 0, found = null, fallback = null;
+    if (box) { var b = box.getBoundingClientRect(); left = b.left + parseFloat(getComputedStyle(box).paddingLeft); }
+    var room = left - 16;
+    for (var k = 0; k < 80 && !found; k++) {
+      y = 90 + r + rnd() * (SH - 110 - r * 2);        // clear of the bar at the top when the page opens
+      if (room >= r * 2 + 8) { var o = 8 + r + rnd() * (room - r * 2 - 8); x = rnd() < .5 ? o : W - o; }
+      else x = (.06 + rnd() * .88) * W;
+      var clear = placed.every(function (q) { return Math.hypot(q[0] - x, q[1] - y) > q[2] + r + 110; });
+      if (clear && (!want || want(x, y))) found = [x, y];
+      else if (clear && !fallback) fallback = [x, y];
+    }
+    found = found || fallback || [x, y];
+    placed.push([found[0], found[1], r]);
+    return found;
+  };
+
+  /* where everything goes; the bright stars are drawn at once, the rest is painted just after */
+  var place = function () {
+    seed = 7; bright = []; faint = []; galaxies = []; placed = [];
+    var n = Math.round(W * SH / 440), i, p;
+    for (i = 0; i < n; i++) {
+      var x = rnd() * W, y = rnd() * SH, m = magnitude(-.2, 7.4), col = pickTemp();
+      if (rnd() > .4 + .6 * Math.min(1, band(x, y) * 1.6)) continue;     // stars crowd towards the Milky Way
+      if (m < 3.7) bright.push(star(x, y, m, col)); else faint.push([x, y, m, col]);
+    }
+    var big = W >= 900;
+    // a double star, gold and blue, like Albireo in the Swan
+    p = spot(8);
+    bright.push(star(p[0], p[1], 2.4, [255, 200, 122]), star(p[0] + 5.5, p[1] - 4, 4, [146, 178, 255]));
+    // supernova remnants lie in the plane of the galaxy, so this one sits in the Milky Way
+    p = spot(big ? 22 : 16, function (x, y) { return band(x, y) > .45; });
+    remnant = [p[0], p[1], big ? 40 : 30];
+    pulsar = star(p[0], p[1], 3.9, [222, 230, 255]); bright.push(pulsar);
+    // galaxies: the dust of the Milky Way hides them, so they keep away from it
+    var away = function (x, y) { return band(x, y) < .12; };
+    (big ? [1, 2, 0] : [1, 2]).forEach(function (k) {
+      var size = (k === 0 ? 14 : k === 1 ? 38 : 44) * (big ? 1 : .75), q = spot(size / 2, away);
+      galaxies.push([q[0], q[1], size, k, 100 + galaxies.length]);
+    });
+    // and smaller, farther ones scattered about, as on a deep photograph
+    var far = Math.round(W * SH / 110000), apart = function (x, y) {
+      return placed.every(function (q) { return Math.hypot(q[0] - x, q[1] - y) > q[2] + 40; });
+    };
+    for (i = 0; i < far; i++) {
+      var tries = 0, gx, gy;
+      do { gx = rnd() * W; gy = 80 + rnd() * (SH - 90); } while ((band(gx, gy) > .12 || !apart(gx, gy)) && ++tries < 30);
+      galaxies.push([gx, gy, 4 + rnd() * 6, rnd() < .45 ? 0 : rnd() < .6 ? 1 : 2, 200 + i]);
+      placed.push([gx, gy, 5]);
+    }
+  };
+
+  /* the Milky Way: a soft glow worked out on a coarse grid (a quarter of the
+     screen's size, coarser on very wide screens) and smoothed up, mottled into
+     star clouds and cut by lanes of dust, warmer towards the centre of the
+     galaxy, with a few faint red clouds of glowing hydrogen along it */
+  var milkyWay = function () {
+    var q = Math.max(4, Math.min(6, Math.round(W / 360))), gw = Math.ceil(W / q), gh = Math.ceil(SH / q);
+    var cv = document.createElement("canvas"); cv.width = gw; cv.height = gh;
+    var g = cv.getContext("2d"), img = g.createImageData(gw, gh), d = img.data, field = new Float32Array(gw * gh), fmax = 0;
+    var ca = geo.ca, sa = geo.sa, bw = geo.w, u0 = geo.u0, L = geo.L, nebs = [], k;
+    seed = 23;
+    for (k = 0; k < 3; k++) {
+      var nu = u0 + (rnd() * 1.6 - .2) * L, nv = (rnd() - .5) * bw * .8;
+      nebs.push([geo.cx + nu * ca - nv * sa, geo.cy + nu * sa + nv * ca, 40 + rnd() * 60]);
+    }
+    for (var y = 0, p = 0; y < gh; y++) for (var x = 0; x < gw; x++, p++) {
+      var X = (x + .5) * q, Y = (y + .5) * q, px = X - geo.cx, py = Y - geo.cy;
+      var u = px * ca + py * sa, v = -px * sa + py * ca;
+      v += (fbm(u / 520 + 3.7, 1.9, 3) - .5) * bw * 1.1;                      // the band meanders
+      var cu = (u - u0) / L, core = Math.exp(-cu * cu), t = v / (bw * (1 + .8 * core)), t2 = t * t;
+      var prof = (Math.exp(-t2) + .22 * Math.exp(-t2 / 5)) * (.42 + .58 * core);
+      if (prof < .004) continue;
+      var clouds = smooth(.28, .82, fbm(u / 210 + 11, v / 105 + 5, 5));
+      var lane = Math.exp(-Math.pow((t - .12) / .5, 2));                        // the dark rift, just off the centre line
+      var dust = smooth(.45, .66, fbm(u / 330 + 40, v / 62 + 9, 5)) * lane * .9 + smooth(.56, .74, fbm(X / 95 + 5, Y / 95 + 3, 4)) * .4;
+      if (dust > .94) dust = .94;
+      var G = prof * (.32 + .68 * clouds * clouds) * (1 - dust);
+      field[p] = G; if (G > fmax) fmax = G;
+      var warm = Math.min(1, core * .85 + dust * .4), a = G * GLOW;
+      var r = 200 + 55 * warm, gg = 212 + 6 * warm, b = 255 - 85 * warm;
+      for (k = 0; k < 3; k++) {
+        var ex = X - nebs[k][0], ey = Y - nebs[k][1], e = (ex * ex + ey * ey) / (nebs[k][2] * nebs[k][2]);
+        if (e > 4) continue;
+        var h = Math.exp(-e) * smooth(.4, .8, fbm(X / 46 + k * 17, Y / 46, 4)) * (1 - dust) * .05;
+        if (h <= 0) continue;
+        r = (r * a + 255 * h) / (a + h); gg = (gg * a + 118 * h) / (a + h); b = (b * a + 140 * h) / (a + h); a += h;
+      }
+      var i4 = p * 4; d[i4] = r; d[i4 + 1] = gg; d[i4 + 2] = b; d[i4 + 3] = Math.min(255, a * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.imageSmoothingEnabled = true; sctx.imageSmoothingQuality = "high";
+    sctx.drawImage(cv, 0, 0, gw * q, gh * q);
+    return { field: field, fmax: fmax, gw: gw, gh: gh, q: q };
+  };
+
+  /* most of the band's light is stars too faint to see one by one: sprinkle
+     the faintest in proportion to its glow, so the dust hides them as well */
+  var starClouds = function (mw) {
+    seed = 31;
+    var n = Math.round(W * SH / 24), side = Math.max(1 / sdpr, .75);
+    for (var i = 0; i < n; i++) {
+      var x = rnd() * W, y = rnd() * SH;
+      var f = mw.field[Math.min(mw.gh - 1, y / mw.q | 0) * mw.gw + Math.min(mw.gw - 1, x / mw.q | 0)];
+      if (f <= 0 || rnd() * mw.fmax > f) continue;
+      sctx.fillStyle = css(mix(pickTemp(), WHITE, .5), alphaOf(magnitude(5.4, 8.6)));
+      sctx.fillRect(x, y, side, side);
+    }
+  };
+
+  var faintStars = function () {
+    for (var i = 0; i < faint.length; i++) {
+      var s = faint[i], a = alphaOf(s[2]), col = mix(s[3], WHITE, .3);
+      if (s[2] < 5.4) {                                                       // the brighter ones show a little halo
+        var hg = sctx.createRadialGradient(s[0], s[1], 0, s[0], s[1], 3.2);
+        hg.addColorStop(0, css(s[3], a * .2)); hg.addColorStop(1, css(s[3], 0));
+        sctx.fillStyle = hg; sctx.fillRect(s[0] - 3.2, s[1] - 3.2, 6.4, 6.4);
+      }
+      sctx.fillStyle = css(col, a);
+      sctx.beginPath(); sctx.arc(s[0], s[1], .5 + .18 * (7.4 - s[2]) / 3.7, 0, 6.2832); sctx.fill();
+    }
+  };
+
+  /* a galaxy, worked out pixel by pixel: a smooth elliptical (0); a spiral
+     seen at a tilt, a warm bulge in a bluer disc with dusty arms and pink
+     knots of new stars (1); or one seen edge-on, cut by its lane of dust (2) */
+  var paintGalaxy = function (gx, gy, size, kind, gseed) {
+    seed = gseed;
+    var R = Math.ceil(size / 2 * sdpr) + 1, S = R * 2, cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    var rot = rnd() * Math.PI, cr = Math.cos(rot), sr = Math.sin(rot);
+    var tilt = kind === 2 ? 1 : kind === 1 ? .42 + rnd() * .5 : .6 + rnd() * .35;
+    var wind = rnd() < .5 ? 1 : -1, pitch = 1.4 + rnd() * .6, ph = rnd() * 6.2832, ox = rnd() * 50, oy = rnd() * 50;
+    var lum = (size > 12 ? .42 : .32) + rnd() * .2;
+    for (var j = 0; j < S; j++) for (var i = 0; i < S; i++) {
+      var dx = (i + .5 - R) / R, dy = (j + .5 - R) / R, a = dx * cr + dy * sr, b = -dx * sr + dy * cr;
+      var warm = 0, cool = 0, pink = 0;
+      if (kind === 0) {
+        var e = Math.hypot(a, b / tilt);
+        warm = .55 * Math.exp(-e * e / .004) + .45 * Math.exp(-e / .16);
+      } else if (kind === 1) {
+        var bb = b / tilt, r = Math.hypot(a, bb), th = Math.atan2(bb, a), lr = Math.log(r + .05) * pitch;
+        var arm = .5 + .5 * Math.cos(2 * (th * wind - lr + ph)), lane = .5 + .5 * Math.cos(2 * (th * wind - lr + ph + .5));
+        var disc = Math.exp(-r / .22), open = smooth(.08, .3, r);           // the arms wind out of the bulge
+        warm = .6 * Math.exp(-r * r / .004) + .3 * Math.exp(-r / .07);
+        cool = disc * (.45 + .9 * arm * arm * open * (.65 + .7 * noise(a * 9 + ox, bb * 9 + oy))) * (1 - .5 * Math.pow(lane, 6) * open);
+        pink = disc * Math.pow(arm, 4) * smooth(.66, .86, noise(a * 16 + oy, bb * 16 + ox)) * smooth(.15, .35, r) * .7;
+      } else {
+        var z = b;
+        var lanes = 1 - .8 * Math.exp(-Math.pow((z - .012) / .018, 2)) * Math.exp(-Math.abs(a) / .55);
+        warm = .5 * Math.exp(-(a * a + z * z / .42) / .012) * lanes;
+        cool = .9 * Math.exp(-Math.abs(a) / .3) * Math.exp(-Math.abs(z) / .045) * lanes;
+      }
+      var edge = 1 - smooth(.75, 1, Math.hypot(dx, dy)), tot = warm + cool + pink, A = tot * lum * edge;
+      if (A < .002) continue;
+      var k = (j * S + i) * 4;
+      d[k] = (255 * warm + 175 * cool + 255 * pink) / tot;
+      d[k + 1] = (226 * warm + 196 * cool + 140 * pink) / tot;
+      d[k + 2] = (186 * warm + 255 * cool + 175 * pink) / tot;
+      d[k + 3] = Math.min(255, A * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.globalCompositeOperation = "lighter";
+    sctx.drawImage(cv, gx - R / sdpr, gy - R / sdpr, S / sdpr, S / sdpr);
+    sctx.globalCompositeOperation = "source-over";
+  };
+
+  /* the remnant of a supernova: red filaments of gas thrown off by the blast,
+     round a blue haze lit by the pulsar left at its heart */
+  var paintRemnant = function (x, y, size) {
+    seed = 57;
+    var R = Math.ceil(size / 2 * sdpr) + 1, S = R * 2, cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var g = cv.getContext("2d"), img = g.createImageData(S, S), d = img.data;
+    var rot = rnd() * Math.PI, cr = Math.cos(rot), sr = Math.sin(rot), ox = rnd() * 40, oy = rnd() * 40;
+    for (var j = 0; j < S; j++) for (var i = 0; i < S; i++) {
+      var dx = (i + .5 - R) / R, dy = (j + .5 - R) / R, a = dx * cr + dy * sr, b = (-dx * sr + dy * cr) / .74;
+      var e = Math.hypot(a, b) / .92;
+      if (e >= 1) continue;
+      var body = smooth(1, .35, e), n1 = fbm(a * 5 + ox, b * 5 + oy, 4);
+      var red = body * (.3 + .8 * Math.pow(1 - Math.abs(2 * n1 - 1), 3.5));
+      var blue = Math.exp(-e * e / .18) * .65, tot = red + blue, A = tot * .3;
+      if (A < .002) continue;
+      var k = (j * S + i) * 4;
+      d[k] = (255 * red + 190 * blue) / tot; d[k + 1] = (138 * red + 205 * blue) / tot; d[k + 2] = (105 * red + 255 * blue) / tot;
+      d[k + 3] = Math.min(255, A * 255);
+    }
+    g.putImageData(img, 0, 0);
+    sctx.globalCompositeOperation = "lighter";
+    sctx.drawImage(cv, x - R / sdpr, y - R / sdpr, S / sdpr, S / sdpr);
+    sctx.globalCompositeOperation = "source-over";
+  };
+
+  /* a fine grain, as on a long exposure; it also keeps the dark gradients from banding */
+  var grain = function () {
+    var T = 128, cv = document.createElement("canvas"); cv.width = cv.height = T;
+    var g = cv.getContext("2d"), img = g.createImageData(T, T), d = img.data;
+    seed = 91;
+    for (var i = 0; i < T * T; i++) { d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = 255; d[i * 4 + 3] = rnd() * 3 | 0; }
+    g.putImageData(img, 0, 0);
+    sctx.setTransform(1, 0, 0, 1, 0, 0);
+    sctx.fillStyle = sctx.createPattern(cv, "repeat"); sctx.fillRect(0, 0, sky.width, sky.height);
+    sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+  };
+
+  var paintSky = function () {
+    sctx.setTransform(1, 0, 0, 1, 0, 0); sctx.clearRect(0, 0, sky.width, sky.height);
+    sctx.setTransform(sdpr, 0, 0, sdpr, 0, 0);
+    starClouds(milkyWay());
+    faintStars();
+    galaxies.forEach(function (g) { paintGalaxy(g[0], g[1], g[2], g[3], g[4]); });
+    paintRemnant(remnant[0], remnant[1], remnant[2]);
+    grain();
+    sky.classList.add("on");                       // and the faint sky comes up, as the eyes adjust
+  };
+
+  var frame = function (t) {
+    if (!W || !H) return;
+    var dt = Math.min(.05, (t - (frame.last || t)) / 1000); frame.last = t;
+    var off = Math.round(Math.min(extra, Math.max(0, window.scrollY * PAN)) * 2) / 2;
+    if (off !== lastOff) { lastOff = off; sky.style.transform = "translate3d(0," + -off + "px,0)"; }
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
+
+    // the brighter stars, twinkling as the air above us shifts
+    for (var i = 0; i < bright.length; i++) {
+      var s = bright[i], y = s.y - off, R = s.spr.R, k = 1;
+      if (y < -R || y > H + R) continue;
+      if (!reduce) {
+        if (s === pulsar) {                        // a sharp pulse and a weaker one between, like a real pulsar's
+          var ph = (t % 1337) / 1337;
+          k = .45 + 1.3 * (Math.exp(-Math.pow((ph - .1) / .03, 2)) + .4 * Math.exp(-Math.pow((ph - .52) / .04, 2)));
+        } else { s.tw = s.tw * .8 + (Math.random() - .5) * s.amp; k = 1 + s.tw; }
+      }
+      ctx.globalAlpha = Math.max(0, Math.min(1, k * .74));
+      ctx.drawImage(s.spr.cv, s.x - R, y - R, R * 2, R * 2);
+    }
+    ctx.globalAlpha = 1;
+
+    if (!reduce) {
+      // now and then a meteor, falling away from the radiant of its shower, above the page
+      if (t > nextMeteor) {
+        var mx = W * (.08 + Math.random() * .84), my = H * (.04 + Math.random() * .5), rx = W * .35, ry = -H * .5;
+        var dl = Math.hypot(mx - rx, my - ry), fast = Math.random() < .65;
+        meteors.push({ x: mx, y: my, ux: (mx - rx) / dl, uy: (my - ry) / dl, born: t, dur: fast ? 420 + Math.random() * 260 : 650 + Math.random() * 450,
+          path: 90 + Math.random() * 170, tail: 28 + Math.random() * 46, peak: .4 + Math.random() * .45, rgb: fast ? [214, 255, 236] : [255, 236, 212] });
+        nextMeteor = t + 12000 + Math.random() * 24000;
+      }
+      meteors = meteors.filter(function (mt) { return t - mt.born < mt.dur; });
+      meteors.forEach(function (mt) {
+        var f = (t - mt.born) / mt.dur, b = f < .7 ? Math.pow(f / .7, 1.3) : Math.pow((1 - f) / .3, 1.6), a = mt.peak * b;
+        var hx = mt.x + mt.ux * mt.path * f, hy = mt.y + mt.uy * mt.path * f, tl = mt.tail * Math.min(1, .35 + f * 1.4);
+        var tx = hx - mt.ux * tl, ty = hy - mt.uy * tl, gr = ctx.createLinearGradient(tx, ty, hx, hy);
+        gr.addColorStop(0, css(mt.rgb, 0)); gr.addColorStop(.75, css(mt.rgb, a * .4)); gr.addColorStop(1, css(WHITE, a));
+        ctx.lineCap = "round"; ctx.lineWidth = 1.1; ctx.strokeStyle = gr;
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+        var hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 3);
+        hg.addColorStop(0, css(WHITE, a * .8)); hg.addColorStop(1, css(mt.rgb, 0));
+        ctx.fillStyle = hg; ctx.fillRect(hx - 3, hy - 3, 6, 6);
+      });
+
+      // a satellite: a star that moves, steady in the sunlight and slow; some
+      // fade out on entering the Earth's shadow, reddening as they go, and a
+      // tumbling one flashes as its panels catch the sun
+      if (t > nextSat && sats.length < 2) {
+        var l2r = Math.random() < .5, sp = 12 + Math.random() * 10, tilt = (Math.random() - .5) * .6;
+        var lum = Math.pow(10, -.4 * (2.9 + Math.random() * 1.2 - 7.4)), glints = Math.random() < .15;
+        sats.push({ x: l2r ? -10 : W + 10, y: H * (.06 + Math.random() * .6), vx: (l2r ? 1 : -1) * sp * Math.cos(tilt), vy: sp * Math.sin(tilt), went: 0,
+          sun: starSprite(lum, [240, 244, 255]), red: starSprite(lum, [255, 160, 110]), flash: glints ? starSprite(lum * 12, [250, 250, 255]) : null,
+          shadow: Math.random() < .4 ? W * (.25 + Math.random() * .55) : 1e9, phase: Math.random() * 6.28 });
+        nextSat = t + 28000 + Math.random() * 32000;
+      }
+      sats = sats.filter(function (st) { return st.x > -12 && st.x < W + 12 && st.y > -12 && st.y < H + 12 && st.went < st.shadow + 70; });
+      sats.forEach(function (st) {
+        st.x += st.vx * dt; st.y += st.vy * dt; st.went += Math.hypot(st.vx, st.vy) * dt;
+        var lit = 1 - smooth(st.shadow, st.shadow + 70, st.went), warm = 1 - smooth(.15, .7, lit);
+        var draw = function (spr, a) { if (a > .004) { ctx.globalAlpha = Math.min(1, a); ctx.drawImage(spr.cv, st.x - spr.R, st.y - spr.R, spr.R * 2, spr.R * 2); } };
+        draw(st.sun, .74 * lit * (1 - warm));
+        draw(st.red, .74 * lit * warm);
+        if (st.flash) draw(st.flash, .9 * lit * Math.pow(Math.max(0, Math.sin(t * .0021 + st.phase)), 40));
+      });
+      ctx.globalAlpha = 1;
+    }
+    ctx.globalCompositeOperation = "source-over";
+  };
+
+  var size = function () {
+    var w = window.innerWidth, h = Math.round(c.getBoundingClientRect().height) || window.innerHeight;
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    if (!w || !h) return;                           // no window yet (a hidden frame): wait for a real size
+    if (w === W && h === H && d === dpr) return;    // a phone's address bar sliding is not a resize of the sky
+    W = w; H = h; dpr = d;
+    extra = Math.min(600, Math.max(0, Math.ceil((document.documentElement.scrollHeight - H) * PAN)));
+    SH = H + extra;
+    sdpr = Math.min(dpr, Math.sqrt(12e6 / (W * SH)));   // the still layer stays a sensible size on huge screens
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    sky.width = Math.round(W * sdpr); sky.height = Math.round(SH * sdpr); sky.style.height = SH + "px";
+    lastOff = -1;
+    setBand(); place();
+    frame(performance.now());
+    var mine = ++gen;                               // paint the still layer once the page is up
+    requestAnimationFrame(function () { setTimeout(function () { if (mine === gen) paintSky(); }, 0); });
+  };
+  size();
+  var resizeTimer = 0;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(size, 150); });
+  if (reduce) {
+    var queued = false;
+    window.addEventListener("scroll", function () {
+      if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; frame(0); }); }
+    }, { passive: true });
+  } else {                                          // 30 frames a second is plenty for a slow sky
+    var loop = function (t) { requestAnimationFrame(loop); if (t - (loop.last || 0) >= 32) { loop.last = t; frame(t); } };
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+</body>
+</html>
